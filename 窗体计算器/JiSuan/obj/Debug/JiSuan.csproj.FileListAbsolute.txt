@@ -1,0 +1,17 @@
+C:\Documents and Settings\Administrator\桌面\JiSuan\JiSuan\bin\Debug\JiSuan.exe
+C:\Documents and Settings\Administrator\桌面\JiSuan\JiSuan\bin\Debug\JiSuan.pdb
+C:\Documents and Settings\Administrator\桌面\JiSuan\JiSuan\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Administrator\桌面\JiSuan\JiSuan\obj\Debug\JiSuan.Form1.resources
+C:\Documents and Settings\Administrator\桌面\JiSuan\JiSuan\obj\Debug\JiSuan.Properties.Resources.resources
+C:\Documents and Settings\Administrator\桌面\JiSuan\JiSuan\obj\Debug\JiSuan.csproj.GenerateResource.Cache
+C:\Documents and Settings\Administrator\桌面\JiSuan\JiSuan\obj\Debug\JiSuan.exe
+C:\Documents and Settings\Administrator\桌面\JiSuan\JiSuan\obj\Debug\JiSuan.pdb
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\bin\Debug\JiSuan.exe
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\bin\Debug\JiSuan.pdb
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\obj\Debug\JiSuan.csprojAssemblyReference.cache
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\obj\Debug\JiSuan.Form1.resources
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\obj\Debug\JiSuan.Properties.Resources.resources
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\obj\Debug\JiSuan.csproj.GenerateResource.cache
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\obj\Debug\JiSuan.csproj.CoreCompileInputs.cache
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\obj\Debug\JiSuan.exe
+C:\Users\lenovo\Desktop\JiSuan\JiSuan\JiSuan\obj\Debug\JiSuan.pdb

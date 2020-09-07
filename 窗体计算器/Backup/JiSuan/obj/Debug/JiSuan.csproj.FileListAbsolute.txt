@@ -1,0 +1,9 @@
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\bin\Debug\JiSuan.exe
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\bin\Debug\JiSuan.pdb
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\obj\Debug\JiSuan.csprojAssemblyReference.cache
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\obj\Debug\JiSuan.Form1.resources
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\obj\Debug\JiSuan.Properties.Resources.resources
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\obj\Debug\JiSuan.csproj.GenerateResource.cache
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\obj\Debug\JiSuan.csproj.CoreCompileInputs.cache
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\obj\Debug\JiSuan.exe
+F:\dotnet\homework1\WindowsFormsApp1\Backup\JiSuan\obj\Debug\JiSuan.pdb
