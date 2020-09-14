@@ -1,0 +1,12 @@
+C:\Users\lenovo\Desktop\图像面积计算\图像面积计算\obj\Debug\图像面积计算.csprojAssemblyReference.cache
+C:\Users\lenovo\Desktop\图像面积计算\图像面积计算\obj\Debug\图像面积计算.csproj.CoreCompileInputs.cache
+C:\Users\lenovo\Desktop\图像面积计算\图像面积计算\bin\Debug\图像面积计算.exe
+C:\Users\lenovo\Desktop\图像面积计算\图像面积计算\bin\Debug\图像面积计算.pdb
+C:\Users\lenovo\Desktop\图像面积计算\图像面积计算\obj\Debug\图像面积计算.exe
+C:\Users\lenovo\Desktop\图像面积计算\图像面积计算\obj\Debug\图像面积计算.pdb
+F:\dotnet\homework2\图像面积计算\bin\Debug\图像面积计算.exe
+F:\dotnet\homework2\图像面积计算\bin\Debug\图像面积计算.pdb
+F:\dotnet\homework2\图像面积计算\obj\Debug\图像面积计算.csprojAssemblyReference.cache
+F:\dotnet\homework2\图像面积计算\obj\Debug\图像面积计算.csproj.CoreCompileInputs.cache
+F:\dotnet\homework2\图像面积计算\obj\Debug\图像面积计算.exe
+F:\dotnet\homework2\图像面积计算\obj\Debug\图像面积计算.pdb
