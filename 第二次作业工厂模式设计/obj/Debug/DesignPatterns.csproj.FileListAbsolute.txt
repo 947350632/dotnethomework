@@ -1,0 +1,7 @@
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\DesignPatterns\bin\Debug\DesignPatterns.exe.config
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\DesignPatterns\bin\Debug\DesignPatterns.exe
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\DesignPatterns\bin\Debug\DesignPatterns.pdb
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\DesignPatterns\obj\Debug\DesignPatterns.csprojAssemblyReference.cache
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\DesignPatterns\obj\Debug\DesignPatterns.csproj.CoreCompileInputs.cache
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\DesignPatterns\obj\Debug\DesignPatterns.exe
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\DesignPatterns\obj\Debug\DesignPatterns.pdb

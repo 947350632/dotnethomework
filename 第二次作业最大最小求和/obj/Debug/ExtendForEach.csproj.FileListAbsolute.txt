@@ -1,0 +1,7 @@
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\ExtendForEach\bin\Debug\ExtendForEach.exe.config
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\ExtendForEach\bin\Debug\ExtendForEach.exe
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\ExtendForEach\bin\Debug\ExtendForEach.pdb
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\ExtendForEach\obj\Debug\ExtendForEach.csprojAssemblyReference.cache
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\ExtendForEach\obj\Debug\ExtendForEach.csproj.CoreCompileInputs.cache
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\ExtendForEach\obj\Debug\ExtendForEach.exe
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week2\ExtendForEach\obj\Debug\ExtendForEach.pdb
