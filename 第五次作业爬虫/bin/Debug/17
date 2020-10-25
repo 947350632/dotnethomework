@@ -1,0 +1,495 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="never" />
+    <meta name="description" content="转载请声明出处哦~，本篇文章发布于luozhiyun的博客：https://www.luozhiyun.com 本文使用的Istio源码是 release 1.5。 本篇是Istio系列的第一篇，希望" />
+    <meta property="og:description" content="转载请声明出处哦~，本篇文章发布于luozhiyun的博客：https://www.luozhiyun.com 本文使用的Istio源码是 release 1.5。 本篇是Istio系列的第一篇，希望" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>从一个例子入手Istio - luozhiyun - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    <link id="MainCss" rel="stylesheet" href="/skins/custom/bundle-custom.min.css?v=1ssrnY3Il79Ok472qeVrpxlSprSXcHhYPgZC5S3wtVM" />
+    <link type="text/css" rel="stylesheet" href="https://www.cnblogs.com/luozhiyun/custom.css?v=DcVgMy10Cl3LXdrHIICQwE/dBH8=" />
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/custom/bundle-custom-mobile.min.css?v=KtAK50iXMDcU4jOl_mm1P0j3gXUtdRHDhFdu7YlsVVg" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/luozhiyun/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/luozhiyun/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/luozhiyun/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 369232;
+        var currentBlogApp = 'luozhiyun';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'Custom';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 08:13';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    
+    
+    
+</head>
+<body class="no-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="page_begin_html">
+        <!-- 图片灯箱 -->
+<link rel="stylesheet" href="https://blog-static.cnblogs.com/files/luozhiyun/zoom.css">
+<!-- 图片灯箱 -->
+ 
+ 
+    </div>
+    <!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/luozhiyun/"><img id="blogLogo" src="/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/luozhiyun/">luozhiyun</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/luozhiyun/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/luozhiyun">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/luozhiyun/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 
+144&nbsp; </span>
+<span id="stats_article_count">文章 - 
+6&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/luozhiyun/p/13874948.html">
+    <span>从一个例子入手Istio</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+    <p><img src="https://img.luozhiyun.com/20201025200933.jpg" alt="74617380_p0_master1200" loading="lazy"></p>
+<blockquote>
+<p>转载请声明出处哦~，本篇文章发布于luozhiyun的博客：<a href="https://www.luozhiyun.com">https://www.luozhiyun.com</a></p>
+<p>本文使用的Istio源码是 release 1.5。</p>
+<p>本篇是Istio系列的第一篇，希望大家接下来能和我一起学习进步。</p>
+</blockquote>
+<p>封面图是<a href="https://www.pixiv.net/users/20345732">Klegs</a>的作品，颜色有一种深邃感，我很喜欢。这篇文章是Istio系列文章的开篇，主要从一个例子入手讲一下Istio，并讲解一些基础概念，后面会基于这个例子来展开讲解istio里面的实现原理。</p>
+<p>Istio里面有很多有趣的内容，希望大家能一起来学习，感受Istio的魅力，当然Istio是和k8s是分不开的，所以也需要掌握了一定k8s知识能力才能进行学习，还没有掌握的同学不妨看看我的系列文章来进行学习：<a href="https://www.luozhiyun.com/archives/tag/%e6%b7%b1%e5%85%a5k8s">深入k8s系列文章</a>。</p>
+<h2 id="基本概念">基本概念</h2>
+<p>先来说一下什么是Service Mesh（服务网格），一般来说Service Mesh是一种控制处理服务间通信的基础设施层，可以在云原生场景下帮助应用程序在复杂的服务拓扑间可靠的传递请求。在实际使用中，服务网格一般是通过一组轻量网络代理来执行治理逻辑的，并且网络代理和应用绑定在一起，但是对应用来说是无感的。</p>
+<p>下面用一张经典的网络示意图来表示一下Service Mesh：</p>
+<p><img src="https://img.luozhiyun.com/20201025200941.png" alt="image-20201024215839257" loading="lazy"></p>
+<p>那么Istio又是什么呢？Istio就是一个Service Mesh实现的形态，用于服务治理的开放平台，并且Istio是与K8s紧密结合的适用于云原生场景的平台。</p>
+<p>下面我们看看Istio的架构图：</p>
+<p><img src="https://img.luozhiyun.com/20201025200944.svg" alt="The overall architecture of an Istio-based application." loading="lazy"></p>
+<p>Istio分别由数据平面（Data plane）和控制平面（Control plane）组成。</p>
+<p>数据平面由网格内的Proxy代理和应用组成，这些代理以sidecar的形式和应用服务一起部署。每一个 sidecar会接管进入和离开服务的流量，并配合控制平面完成流量控制等方面的功能。</p>
+<p>控制平面用于控制和管理数据平面中的sidecar代理，完成配置的分发、服务发现、和授权鉴权等功能，可以统一的对数据平面进行管理。</p>
+<p>在上面的组件中，Proxy代理默认使用Envoy作为sidecar代理，Envoy是由Lyft内部于2016年开发的，其性能和资源占用都有着很好的表现，能够满足服务网格中对透明代理的轻量高性能的要求。</p>
+<p>Pilot组件主要功能是将路由规则等配置信息转换为sidecar可以识别的信息，并下发给数据平面，完成流量控制相关的功能。</p>
+<p>Citadel是专门负责安全的组件，内置有身份和证书管理功能，可以实现较为强大的授权和认证等操作。</p>
+<p>Galley主要负责配置的验证、提取和处理等功能。</p>
+<h1 id="安装-istio">安装 Istio</h1>
+<p>本地需要准备一台机器上面安装有K8s，可以使用我在讲k8s的时候部署的机器：<a href="https://www.luozhiyun.com/archives/314">1.深入k8s：k8s部署&amp;在k8s中运行第一个程序</a>。</p>
+<p>因为Istio的发展太过于迅速了，我这里是使用1.5.10的版本进行举例，大家可以去这里下载好应用包：<a href="https://github.com/istio/istio/releases/tag/1.5.10%E3%80%82">https://github.com/istio/istio/releases/tag/1.5.10。</a></p>
+<p>解压好之后里面会包含如下文件目录：</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>包含内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bin</code></td>
+<td>包含 istioctl 的客户端文件</td>
+</tr>
+<tr>
+<td><code>install</code></td>
+<td>包含 Consul、GCP 和 Kubernetes 平台的 <a href="https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio">Istio</a> 安装脚本和文件</td>
+</tr>
+<tr>
+<td><code>samples</code></td>
+<td>包含示例应用程序</td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td>包含用于性能测试和在本地机器上进行测试的脚本</td>
+</tr>
+</tbody>
+</table>
+<p>然后我们将istioctl客户端路径加入环境变量中：</p>
+<pre><code class="language-sh">[root@localhost ~]# export PATH=$PATH:$(pwd)/istio-1.5.10/bin
+</code></pre>
+<p>istio不同的版本会有不同的差异，如下表格：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>default</th>
+<th>demo</th>
+<th>minimal</th>
+<th>remote</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用场景</td>
+<td>生产环境</td>
+<td>展示、学习</td>
+<td>基本流控</td>
+<td>多网格共享平面</td>
+</tr>
+<tr>
+<td><strong>核心组件</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- pilot</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td></td>
+</tr>
+<tr>
+<td>- ingressgateway</td>
+<td>Y</td>
+<td>Y</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- engressgateway</td>
+<td></td>
+<td>Y</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>我们这里用于学习使用，所以使用demo进行安装：</p>
+<pre><code class="language-sh">[root@localhost ~]# istioctl manifest apply --set profile=demo
+</code></pre>
+<p>运行完命令后显示：Installation compelte代表安装完成。</p>
+<p>安装好之后会安装一个新的namespace：istio-system</p>
+<p>我们可以指定ns来获取它下面的pod：</p>
+<pre><code class="language-sh">[root@localhost ~]# kubectl get pod -n istio-system
+NAME                                   READY   STATUS    RESTARTS   AGE
+grafana-764dbb499-pxs84                1/1     Running   0          17h
+istio-egressgateway-775f9cd579-lsw5q   1/1     Running   0          17h
+istio-ingressgateway-5d75d8897-dn8vz   1/1     Running   0          17h
+istio-tracing-9dd6c4f7c-pwq22          1/1     Running   0          17h
+istiod-749c4cf7f8-xgnv8                1/1     Running   0          17h
+kiali-869c6894c5-l72sc                 1/1     Running   0          17h
+prometheus-79757ffc4-qxccg             2/2     Running   0          17h
+</code></pre>
+<h1 id="bookinfo-示例">Bookinfo 示例</h1>
+<p>Bookinfo 是 Istio 社区官方推荐的示例应用之一。它可以用来演示多种Istio的特性，并且它是一个异构的微服务应用。应用由四个单独的微服务构成：productpage、details、reviews、ratings。</p>
+<ul>
+<li><code>productpage</code> 会调用 <code>details</code> 和 <code>reviews</code> 两个微服务，用来生成页面由python来编写。</li>
+<li><code>details</code> 中包含了书籍的信息由，Ruby来编写</li>
+<li><code>reviews</code> 中包含了书籍相关的评论。它还会调用 <code>ratings</code> 微服务，由java编写。</li>
+<li><code>ratings</code> 中包含了由书籍评价组成的评级信息，由Node js编写。</li>
+</ul>
+<p>下面这个图展示了调用关系：</p>
+<p><img src="https://img.luozhiyun.com/20201025200952.png" alt="image-20201025163623769" loading="lazy"></p>
+<p>如果我们的应用要接入Istio服务，那么就需要在这些应用里面都打上sidecar，使服务所有的出入流量都被sidecar所劫持，然后就可以利用istio为应用提供服务路由、遥测数据收集以及策略实施等功能。</p>
+<h3 id="启动服务">启动服务</h3>
+<p>要实现注入sidecar有两种方式，一个是手动注入，一个是自动注入。</p>
+<p>手动注入可以通过使用：<code>istioctl kube-inject -f xxx.yaml | kubectl apply -f - </code>来实现。</p>
+<p>自动注入的需要为应用部署的命令空间打上标签 <code>istio-injection=enabled</code>，如果在default空间部署应用，那么可以这么做：</p>
+<pre><code class="language-sh">[root@localhost ~]# kubectl label namespace default istio-injection=enabled
+</code></pre>
+<p>这里istio会利用k8s的webhook机制为每个创建的pod都自动注入sidecar，具体是如何做的，下一篇我们再讲。</p>
+<p>然后我们使用istio中自带的例子部署应用：</p>
+<pre><code class="language-sh">[root@localhost ~]# kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+</code></pre>
+<p>过一段时间后确认应用都已启动和部署成功：</p>
+<pre><code class="language-sh">[root@localhost ~]#  kubectl get pod
+NAME                              READY   STATUS    RESTARTS   AGE
+details-v1-6c9f8bcbcb-shltm       2/2     Running   0          17h
+productpage-v1-7df7cb7f86-h75dd   2/2     Running   0          17h
+ratings-v1-65cff55fb8-9vh2x       2/2     Running   0          17h
+reviews-v1-7bccdbbf96-m2xbf       2/2     Running   0          17h
+reviews-v2-7c9685df46-lljzt       2/2     Running   0          17h
+reviews-v3-58fc46b64-294f4        2/2     Running   0          17h
+sleep-8f795f47d-6pw96             2/2     Running   0          16h
+</code></pre>
+<p>我们可以用describe命令查看其中的pod：</p>
+<pre><code class="language-sh">[root@localhost ~]#  kubectl describe pod details-v1-6c9f8bcbcb-shltm
+...
+Init Containers:
+  istio-init:
+    Container ID:  docker://6d14ccc83bd119236bf8fda13f6799609c87891be9b2c5af7cbf7d8c913ce17e
+    Image:         docker.io/istio/proxyv2:1.5.10
+    Image ID:      docker-pullable://istio/proxyv2@sha256:abbe8ad6d50474814f1aa9316dafc2401fbba89175638446f01afc36b5a37919
+    Port:          &lt;none&gt;
+    Host Port:     &lt;none&gt;
+    Command:
+      istio-iptables
+      -p
+      15001
+      -z
+      15006
+      -u
+      1337
+      -m
+      REDIRECT
+      -i
+      *
+      -x
+
+      -b
+      *
+      -d
+      15090,15020
+...
+Containers:
+  details:
+    Container ID:   docker://ed216429216ea1b8a1ba20960590edb7322557467c38cceff3c3e847bcff0a14
+    Image:          docker.io/istio/examples-bookinfo-details-v1:1.15.1
+    Image ID:       docker-pullable://istio/examples-bookinfo-details-v1@sha256:344b1c18703ab1e51aa6d698f459c95ea734f8317d779189f4638de7a00e61ae
+  	...
+  istio-proxy:
+    Container ID:  docker://a3862cc8f53198c8f86a911089e73e00f4cc4aa02eea05aaeb0bd267a8e98482
+    Image:         docker.io/istio/proxyv2:1.5.10
+    Image ID:      docker-pullable://istio/proxyv2@sha256:abbe8ad6d50474814f1aa9316dafc2401fbba89175638446f01afc36b5a37919
+    Port:          15090/TCP
+    Host Port:     0/TCP
+    Args:
+    ...
+</code></pre>
+<p>可以看到里面有一个初始化的Init Containers，用于设置 <code>iptables</code> 规则。还注入了istio-proxy，这个容器是真正的 Sidecar。</p>
+<p>为了能让应用程序可以从外部访问 k8s 集群，需要安装gateway：</p>
+<pre><code class="language-sh">[root@localhost ~]# kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+</code></pre>
+<p>检查gateway：</p>
+<pre><code class="language-sh">[root@localhost ~]# kubectl get gateway
+NAME               AGE
+bookinfo-gateway   17h
+</code></pre>
+<p>因为我是单机环境，未使用外部负载均衡器，需要通过 node port 访问，然后我们查看node port：</p>
+<pre><code class="language-sh">[root@localhost ~]# kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}'
+22412
+</code></pre>
+<p>我的k8snode地址是192.168.13.129，然后我们在浏览器输入：</p>
+<p><a href="http://192.168.13.129:22412/productpage">http://192.168.13.129:22412/productpage</a></p>
+<p>可以访到对应的页面了，多刷新几次，会发现访问到不同的Book Reviews，因为默认使用的轮询策略。</p>
+<h2 id="总结">总结</h2>
+<p>这一篇讲了一下如何安装istio，以及如何部署应用，使用istio来完成一个实例，比较简单和基础，里面的很多细节我这里都一笔带过了，但是在后面的一些内容会基于这个例子来进行讲解里面的具体实现原理，所以这篇文章还是有些必要的。</p>
+<h2 id="reference">Reference</h2>
+<p><a href="https://www.redhat.com/en/topics/microservices/what-is-a-service-mesh">What's a service mesh?</a></p>
+<p><a href="https://istio.io/latest/docs/concepts/what-is-istio/">What is Istio?</a></p>
+<p><a href="https://istio.io/latest/docs/examples/bookinfo/">https://istio.io/latest/docs/examples/bookinfo/</a></p>
+
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2020-10-25 20:13</span>&nbsp;
+<a href="https://www.cnblogs.com/luozhiyun/">luozhiyun</a>&nbsp;
+阅读(<span id="post_view_count">34</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13874948" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13874948);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = false, cb_blogId = 369232, cb_blogApp = 'luozhiyun', cb_blogUserGuid = '79a93e4d-f750-4931-3355-08d49c352df3';
+    var cb_entryId = 13874948, cb_entryCreatedDate = '2020-10-25 20:13', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 luozhiyun
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    <div id="page_end_html">
+        
+<script src="https://blog-static.cnblogs.com/files/luozhiyun/simple-color.js"></script>
+ 
+<script src="https://blog-static.cnblogs.com/files/luozhiyun/zoom.js"></script>
+<script src="https://blog-static.cnblogs.com/files/luozhiyun/Meting.min.js"></script> 
+    </div>
+</body>
+</html>

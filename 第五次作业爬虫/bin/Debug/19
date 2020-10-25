@@ -1,0 +1,796 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="description" content="一、简介 前面我们聊到了openvpn的部署和使用，它能够实现从互联网通过openvpn连接到公司内网服务器，从而进行远程管理；但openvpn有一个缺点它不能记录哪些用户在内网服务器上操作了什么，拥" />
+    <meta property="og:description" content="一、简介 前面我们聊到了openvpn的部署和使用，它能够实现从互联网通过openvpn连接到公司内网服务器，从而进行远程管理；但openvpn有一个缺点它不能记录哪些用户在内网服务器上操作了什么，拥" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>jumpserver部署使用 - Linux-1874 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    <link id="MainCss" rel="stylesheet" href="/skins/custom/bundle-custom.min.css?v=1ssrnY3Il79Ok472qeVrpxlSprSXcHhYPgZC5S3wtVM" />
+    <link type="text/css" rel="stylesheet" href="https://www.cnblogs.com/qiuhom-1874/custom.css?v=5DxGq/mDuhLL7SMzbDxuUtH1yB4=" />
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/custom/bundle-custom-mobile.min.css?v=KtAK50iXMDcU4jOl_mm1P0j3gXUtdRHDhFdu7YlsVVg" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/qiuhom-1874/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/qiuhom-1874/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/qiuhom-1874/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 465299;
+        var currentBlogApp = 'qiuhom-1874';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'Custom';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 09:44';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    
+    
+    
+</head>
+<body class="no-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="page_begin_html">
+        <script>loadPageBeginHtml();</script>
+    </div>
+    <!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/qiuhom-1874/"><img id="blogLogo" src="/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/qiuhom-1874/">1874</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/qiuhom-1874/">
+首页</a>
+</li>
+<li>
+
+
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/Linux-1874">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/qiuhom-1874/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 
+167&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+44</span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/qiuhom-1874/p/13874503.html">
+    <span>jumpserver部署使用</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://images.cnblogs.com/cnblogs_com/qiuhom-1874/1655970/o_201025133432jumpserver.jpg" class="desc_img">
+今天我们来聊一款和openvpn有类似功能的软件jumpserver；jumpserver和openvpn都可以让用户从互联网连接公司内网服务器；但通常jumpserver都不会放在互联网；它主要用作运维、开发、以及测试相关人员来利用它连接公司内网服务器，从而实现集中管理公司内网服务器；同时jumpserver还具有权限管理，用户管理，以及监控回放等等功能；
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body">
+    <p>　　一、简介</p>
+<p>　　前面我们聊到了openvpn的部署和使用，它能够实现从互联网通过openvpn连接到公司内网服务器，从而进行远程管理；但openvpn有一个缺点它不能记录哪些用户在内网服务器上操作了什么，拥有客户端的证书和私钥以及ca的证书和客户端配置，就可以直接连接到公司内网，这从某些角度讲不是一个安全的解决方案；有关openvpn的搭建和使用请参考<a href="https://www.cnblogs.com/qiuhom-1874/p/13861781.html" target="_blank">https://www.cnblogs.com/qiuhom-1874/p/13861781.html</a>；今天我们来聊一款和openvpn有类似功能的软件jumpserver；jumpserver和openvpn都可以让用户从互联网连接公司内网服务器；但通常jumpserver都不会放在互联网；它主要用作运维、开发、以及测试相关人员来利用它连接公司内网服务器，从而实现集中管理公司内网服务器；同时jumpserver还具有权限管理，用户管理，以及监控回放等等功能；</p>
+<p>　　二、jumpserver架构图</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025173045863-1895726437.png" alt="" loading="lazy"></p>
+<p>　　三、jumpserver服务器安装</p>
+<p>　　环境说明</p>
+<table style="height: 133px; width: 366px" border="0" align="left">
+<tbody>
+<tr>
+<td>主机名称</td>
+<td>角色</td>
+<td>ip地址</td>
+</tr>
+<tr>
+<td>node01</td>
+<td>jumpserver web</td>
+<td>192.168.0.41</td>
+</tr>
+<tr>
+<td>node02</td>
+<td>mysql/redis</td>
+<td>192.168.0.42</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>　　</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>　　1、在node02上部署mariadb（版本最低5.5.6，如果是mysql版本最低5.6）</p>
+<p>　　配置mariadb yum仓库</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node02 ~]# cat /etc/yum.repos.d/mariadb.repo
+[mariadb]
+name=mariadb repo
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/mariadb//mariadb-10.1.46/yum/centos/7/x86_64/
+gpgcheck=0
+[root@node02 ~]# 
+</pre>
+</div>
+<p>　　安装MariaDB-server</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node02 ~]# yum install -y MariaDB-server
+</pre>
+</div>
+<p>　　配置mariadb 忽略名称解析</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025175048258-1606831282.png" alt="" loading="lazy"></p>
+<p>　　启动mariadb</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025175128411-1439893711.png" alt="" loading="lazy"></p>
+<p>　　连接mariadb 创建数据库和用户</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node02 ~]# mysql
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 3
+Server version: 10.1.46-MariaDB MariaDB Server
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]&gt; create database jumpserver default charset 'utf8' collate 'utf8_bin';
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [(none)]&gt; grant all on jumpserver.* to 'jumpserver'@'%' identified by 'admin123.com';
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]&gt; flush privileges;
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]&gt; 
+</pre>
+</div>
+<p>　　验证：使用jumpserver登录数据库</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node02 ~]# mysql -ujumpserver -padmin123.com -h192.168.0.42
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 4
+Server version: 10.1.46-MariaDB MariaDB Server
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| jumpserver         |
+| test               |
++--------------------+
+3 rows in set (0.01 sec)
+
+MariaDB [(none)]&gt; exit
+Bye
+[root@node02 ~]# 
+</pre>
+</div>
+<p>　　ok,到此数据服务就准备好了；</p>
+<p>　　2、在node02上部署redis</p>
+<p>　　安装redis</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node02 ~]# yum -y install redis
+</pre>
+</div>
+<p>　　配置redis监听本机所有地址，并设置密码</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node02 ~]# grep -Ei "^(bind|requirepass)" /etc/redis.conf
+bind 0.0.0.0
+requirepass admin123.com
+[root@node02 ~]# 
+</pre>
+</div>
+<p>　　启动redis</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025180043956-478171318.png" alt="" loading="lazy"></p>
+<p>　　验证：登录redis</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node02 ~]# redis-cli -h 192.168.0.42
+192.168.0.42:6379&gt; KEYS *
+(error) NOAUTH Authentication required.
+192.168.0.42:6379&gt; AUTH admin123.com
+OK
+192.168.0.42:6379&gt; KEYS *
+(empty list or set)
+192.168.0.42:6379&gt; exit
+[root@node02 ~]# 
+</pre>
+</div>
+<p>　　到此redis就准备好了</p>
+<p>　　3、在node01上部署jumpserver web 容器</p>
+<p>　　配置docker-ce的yum源</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# cat /etc/yum.repos.d/docker-ce.repo
+[docker-ce-stable]
+name=Docker CE Stable - $basearch
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/$basearch/stable
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-stable-debuginfo]
+name=Docker CE Stable - Debuginfo $basearch
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/debug-$basearch/stable
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-stable-source]
+name=Docker CE Stable - Sources
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/source/stable
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-edge]
+name=Docker CE Edge - $basearch
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/$basearch/edge
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-edge-debuginfo]
+name=Docker CE Edge - Debuginfo $basearch
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/debug-$basearch/edge
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-edge-source]
+name=Docker CE Edge - Sources
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/source/edge
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-test]
+name=Docker CE Test - $basearch
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/$basearch/test
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-test-debuginfo]
+name=Docker CE Test - Debuginfo $basearch
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/debug-$basearch/test
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-test-source]
+name=Docker CE Test - Sources
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/source/test
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-nightly]
+name=Docker CE Nightly - $basearch
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/$basearch/nightly
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-nightly-debuginfo]
+name=Docker CE Nightly - Debuginfo $basearch
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/debug-$basearch/nightly
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+
+[docker-ce-nightly-source]
+name=Docker CE Nightly - Sources
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/source/nightly
+enabled=0
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
+[root@node01 ~]# 
+</pre>
+</div>
+<p>　　安装docker-ce</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# yum install -y docker-ce
+</pre>
+</div>
+<p>　　启动docker</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# systemctl start docker
+[root@node01 ~]# docker info 
+Client:
+ Debug Mode: false
+
+Server:
+ Containers: 0
+  Running: 0
+  Paused: 0
+  Stopped: 0
+ Images: 0
+ Server Version: 19.03.13
+ Storage Driver: overlay2
+  Backing Filesystem: xfs
+  Supports d_type: true
+  Native Overlay Diff: true
+ Logging Driver: json-file
+ Cgroup Driver: cgroupfs
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+ Swarm: inactive
+ Runtimes: runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: 8fba4e9a7d01810a393d5d25a3621dc101981175
+ runc version: dc9208a3303feef5b3839f4323d9beb36df0a9dd
+ init version: fec3683
+ Security Options:
+  seccomp
+   Profile: default
+ Kernel Version: 3.10.0-693.el7.x86_64
+ Operating System: CentOS Linux 7 (Core)
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 2
+ Total Memory: 1.781GiB
+ Name: node01.test.org
+ ID: JQY2:LCCM:EU6J:ARI7:UCEL:5HUV:FGE4:6RTY:PWR3:NKJI:EA3K:BKSA
+ Docker Root Dir: /var/lib/docker
+ Debug Mode: false
+ Registry: https://index.docker.io/v1/
+ Labels:
+ Experimental: false
+ Insecure Registries:
+  127.0.0.0/8
+ Live Restore Enabled: false
+
+[root@node01 ~]# 
+</pre>
+</div>
+<p>　　配置docker加速器</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# cat /etc/docker/daemon.json
+{
+        "registry-mirrors": ["https://registry.docker-cn.com","https://cyr1uljt.mirror.aliyuncs.com"]
+}
+[root@node01 ~]# 
+</pre>
+</div>
+<p>　　重启docker</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# systemctl restart docker
+</pre>
+</div>
+<p>　　使用doker info 命令验证加速器地址是否应用</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025181152793-1936746417.png" alt="" loading="lazy"></p>
+<p>　　下载jumpserver web镜像</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+[root@node01 ~]# docker pull jumpserver/jms_all:v2.4.0
+v2.4.0: Pulling from jumpserver/jms_all
+75f829a71a1c: Pull complete 
+f9c494d6df5d: Pull complete 
+5135b4193f02: Pull complete 
+918e815b1dc8: Pull complete 
+0334369c4479: Pull complete 
+64a0f2a7663a: Pull complete 
+Digest: sha256:2081c88eca6dffb41bc42d8fe06d18c4379eacdbb354fa56dffd2a918738274d
+Status: Downloaded newer image for jumpserver/jms_all:v2.4.0
+docker.io/jumpserver/jms_all:v2.4.0
+[root@node01 ~]# docker images
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+jumpserver/jms_all   v2.4.0              3418bbaaded1        9 days ago          1.54GB
+[root@node01 ~]# 
+</pre>
+</div>
+<p>　　编写生成<code><span class="nv">SECRET_KEY和</span></code><code><span class="nv">BOOTSTRAP_TOKEN的脚本</span></code></p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# cat key_gen.sh
+#!/bin/bash
+if [ ! "$SECRET_KEY" ]; then
+  SECRET_KEY=`cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 50`;
+  echo "SECRET_KEY=$SECRET_KEY" &gt;&gt; ~/.bashrc;
+  echo $SECRET_KEY;
+else
+  echo $SECRET_KEY;
+fi  
+if [ ! "$BOOTSTRAP_TOKEN" ]; then
+  BOOTSTRAP_TOKEN=`cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 16`;
+  echo "BOOTSTRAP_TOKEN=$BOOTSTRAP_TOKEN" &gt;&gt; ~/.bashrc;
+  echo $BOOTSTRAP_TOKEN;
+else
+  echo $BOOTSTRAP_TOKEN;
+fi
+[root@node01 ~]# 
+</pre>
+</div>
+<p>　　提示：上面脚本主要是判断是否有SECRET_KEY和BOOTSTRAP这两个key，如果没有就生成，并把SECRET_KEY保存到SECRET_KEY并放到当前家目录的.bashrc中，并打印出来，如果有就直接打印出来；<code><span class="nv"><br></span></code></p>
+<p>　　运行脚本生成<code><span class="nv">SECRET_KEY和</span></code><code><span class="nv">BOOTSTRAP_TOKEN</span></code></p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# bash key_gen.sh
+wIUaeZtCbtTNUDL9igEIImALjjaMo9ygPwfMWmPZcyWD0c3K9Q
+Lx15DW9xDxqOkiCq
+[root@node01 ~]# 
+</pre>
+</div>
+<p>　　提示：这两个随机密钥很重要，它用来加密数据库字段用的，所以在环境迁移和升级都会用到这两个key；</p>
+<p>　　创建用户保存jumpserver容器中的数据目录</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# mkdir /data/jumpserver/ -pv
+mkdir: created directory ‘/data’
+mkdir: created directory ‘/data/jumpserver/’
+[root@node01 ~]# 
+</pre>
+</div>
+<p>　　启动jumpserver/jms_all:v2.4.0镜像为容器</p>
+<div class="cnblogs_Highlighter">
+<pre class="brush:bash;gutter:true;">[root@node01 ~]# docker run --name jms_all -d \
+&gt;   -v /data/jumpserver/:/opt/jumpserver/data \
+&gt;   -p 80:80 \
+&gt;   -p 2222:2222 \
+&gt;   -e SECRET_KEY=wIUaeZtCbtTNUDL9igEIImALjjaMo9ygPwfMWmPZcyWD0c3K9Q \
+&gt;   -e BOOTSTRAP_TOKEN=Lx15DW9xDxqOkiCq \
+&gt;   -e DB_HOST=192.168.0.42 \
+&gt;   -e DB_PORT=3306 \
+&gt;   -e DB_USER=jumpserver \
+&gt;   -e DB_PASSWORD=admin123.com \
+&gt;   -e DB_NAME=jumpserver \
+&gt;   -e REDIS_HOST=192.168.0.42 \
+&gt;   -e REDIS_PORT=6379 \
+&gt;   -e REDIS_PASSWORD=admin123.com \
+&gt;   --privileged=true \
+&gt;   jumpserver/jms_all:v2.4.0
+8974115a714c5000bac47a8a457190408861ad1967429435ad4f6a0b838c2fe3
+[root@node01 ~]# docker ps 
+CONTAINER ID        IMAGE                       COMMAND             CREATED             STATUS              PORTS                                        NAMES
+8974115a714c        jumpserver/jms_all:v2.4.0   "./entrypoint.sh"   14 seconds ago      Up 12 seconds       0.0.0.0:80-&gt;80/tcp, 0.0.0.0:2222-&gt;2222/tcp   jms_all
+[root@node01 ~]# ss -tnl
+State      Recv-Q Send-Q                  Local Address:Port                                 Peer Address:Port              
+LISTEN     0      128                                 *:22                                              *:*                  
+LISTEN     0      100                         127.0.0.1:25                                              *:*                  
+LISTEN     0      128                                :::2222                                           :::*                  
+LISTEN     0      128                                :::80                                             :::*                  
+LISTEN     0      128                                :::22                                             :::*                  
+LISTEN     0      100                               ::1:25                                             :::*                  
+[root@node01 ~]# 
+</pre>
+</div>
+<p>　　提示：以上启动容器主要指定了mariadb和redis服务器的相关地址和密码端口信息；其中在宿主机上暴露了80和2222端口；</p>
+<p>　　查看日志</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025183600942-1211758179.png" alt="" loading="lazy"></p>
+<p>　　提示：使用docker logs -f 容器id 能够看到上图中的信息，说明jumpserver容器就跑起来了；</p>
+<p>　　访问jumpserver</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025183742411-216364822.png" alt="" loading="lazy"></p>
+<p>　　提示：访问jumpserver容器所在主机的ip地址即可访问到jumpserver，默认用户名和密码都是admin；</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025183901176-245581447.png" alt="" loading="lazy"></p>
+<p>　　提示：第一次登陆时，它会让我们重设密码；</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025184001070-1712196176.png" alt="" loading="lazy"></p>
+<p>　　提示：重设密码后，重新登录，jumpserver的首页就是上图这样；后续我们就可以在这个界面来管理内网服务器了；到此jumpserver服务器就搭建好了；</p>
+<p>　　四、jumpserver使用</p>
+<p>　　1、jumpserver基本设置</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025191830948-1519331918.png" alt="" loading="lazy"></p>
+<p>　　提示：基本设置是必须设置当前jumpserver的url和邮件主题前缀；这样在用户收到邮件中的链接都会指向这个jumpserver的url;</p>
+<p>　　2、配置jumpserver发邮件的邮件服务器和用户名密码</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025190753094-1640030749.png" alt="" loading="lazy"></p>
+<p>　　提示：在系统设置---&gt;邮件设置，把对应的账号信息，邮件服务器信息都填写好，然后测试连接，如果可以正常收到邮件，说明邮件服务器信息和邮件用户名密码没有问题；最后点提交；</p>
+<p>　　3、创建用户</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025191232851-1696955213.png" alt="" loading="lazy"></p>
+<p>　　提示：在用户管理---&gt;用户列表---&gt;创建；填写好用户相关信息后，点击最下面的提交；</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025191427097-595712382.png" alt="" loading="lazy"></p>
+<p>　　提示：新建用户成功以后，对应的用户邮箱就会收到一份有jumpserver发送到用户创建成功的邮件，用户可以点击此邮件中的链接进行密码设定；</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025192118063-42806628.png" alt="" loading="lazy"></p>
+<p>　　提示：密码设定好了，点击设置；用户会收到一份密码更新成功的邮件；</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025192316164-2113482212.png" alt="" loading="lazy"></p>
+<p>　　4、创建用户组，并把test用户添加到对应的组中；</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025192455821-582254740.png" alt="" loading="lazy"></p>
+<p>　　提示：用户管理---&gt;用户组----&gt;创建，填写好组信息和选择好用户后，点击提交即可；</p>
+<p>　　5、jumpserver 资产管理---&gt;管理用户创建</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025192802391-1433866114.png" alt="" loading="lazy"></p>
+<p>　　提示：资产管理----&gt;管理用户----&gt;创建，填写好对应被管控端的管理员和密码点击提交；<span data-v-88791248="">管理用户是资产（被控服务器）上的 root，或拥有 NOPASSWD: ALL sudo 权限的用户， JumpServer 使用该用户来 `推送系统用户`、`获取资产硬件信息` 等。&nbsp;</span></p>
+<p>　　6、创建系统用户，这里的系统用户是指我们使用jumpserver登录到对应的被管控主机时用的用户</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025202856254-194575835.png" alt="" loading="lazy"></p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025202925223-1995083670.png" alt="" loading="lazy"></p>
+<p>　　提示：资产管理---&gt;系统用户---&gt;新建，填写好用户名，勾选自动推送和自动生成密钥，点击最下方的提交即可；这里填写的用户会用作jumpserver上登录对应的主机用到用户，如果被管控端没有这个用户，jumpserver就会利用我们刚才添加到系统用户去创建一个这里的系统用户；</p>
+<p>　　7、创建资产</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025193626009-1636586309.png" alt="" loading="lazy"></p>
+<p>　　提示：资产管理---&gt;资产列表---&gt;新建，填写对应被管控的的主机信息和ip地址信息，以及管理用户，点击最下方的提交；</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025193851238-131152173.png" alt="" loading="lazy"></p>
+<p>　　提示：提交完成后，我们就可以在资产列表中看到我们刚才添加到主机；</p>
+<p>　　8、资产授权</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025201727528-244736624.png" alt="" loading="lazy"></p>
+<p>　　提示：权限管理---&gt;资产授权---&gt;创建，填写好名称后，要选择用户和组以及资产和系统用户，然后点击最下方的提交；到此一个资源就授权给test用户和test组中的成员了；这里需要注意一点，一个节点中有很多server，如果你只想授权单台server给某个用户，下面的节点就留空，如果你想授权一个节点给用户你可以选择节点，上面的资产就可以留空，如果你又想授权单个资产和某个节点给用户，就选择对应的资产和节点即可；如果这里选择default节点，表示把default节点下的所有主机都授权给用户；默认default节点包含所有主机；</p>
+<p>　　验证：使用test用户登录jumpserver，看看test用户是否能够看到我们创建的资源？</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025201823974-764486903.png" alt="" loading="lazy"></p>
+<p>　　提示：首次登陆，它会让我们更新用户的信息，然后同一些条款，这个我们按照实际信息来修改即可；在我的资产中可以看到当前用户有点资产；</p>
+<p>　　验证：使用test用户连接node01看看是否可以连接到node01？</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025203615955-589534193.png" alt="" loading="lazy"></p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025203650212-911132114.png" alt="" loading="lazy"></p>
+<p>　　提示：可以看到test用户是可以正常使用我们配置的jumpserver用户正常正常的连接到node01；</p>
+<p>　　9、查看用户操作回放</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025204140061-857851338.png" alt="" loading="lazy"></p>
+<p>　　提示：点击会话管理----&gt;会话管理----&gt;历史会话----&gt; 找到对应会话后面的回放即可查看对应用户在过去会话中执行的操作；</p>
+<p><img src="https://img2020.cnblogs.com/blog/1503305/202010/1503305-20201025204545618-1906664077.gif" alt="" loading="lazy"></p>
+<p>　　好了，jumpserver的基本操作就到此为止了，后续其他日志啊，都可以在web上点击对应的菜单查看，我这里就不过多阐述了；</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2020-10-25 21:44</span>&nbsp;
+<a href="https://www.cnblogs.com/qiuhom-1874/">Linux-1874</a>&nbsp;
+阅读(<span id="post_view_count">20</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13874503" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13874503);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 465299, cb_blogApp = 'qiuhom-1874', cb_blogUserGuid = 'c59550a8-b7e6-4fd5-7bec-08d6284f5a10';
+    var cb_entryId = 13874503, cb_entryCreatedDate = '2020-10-25 21:44', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 Linux-1874
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    <div id="page_end_html">
+        <!--评论带头像 -->
+<script type="text/javascript" src="https://blog-static.cnblogs.com/files/qiuhom-1874/Comments.js"></script>
+
+<!--评论像微信样式 -->
+<link  type="text/css" rel="stylesheet" href="https://blog-static.cnblogs.com/files/qiuhom-1874/comment.css">
+<script type="text/javascript">
+$(function(){
+    $('#blogTitle h1').addClass('bounceInLeft animated');
+    $('#blogTitle h2').addClass('bounceInRight animated');
+    // 删除反对按钮    $('.buryit').remove();
+    initCommentData();
+});
+function initCommentData() {
+    $('.feedbackItem').each(function() {
+        var text = $(this).find('.feedbackListSubtitle .layer').text();
+        // 将楼层信息放到data里面
+        // $(this).find('.blog_comment_body').attr('data-louceng', text.replace(/^#/g, ''));
+        if($(this).find('.feedbackListSubtitle .louzhu').length>0) $(this).addClass('myself');
+        var avatar = $(this).find('> .feedbackCon > span').html() || 'http://pic.cnitblog.com/face/sample_face.gif';
+        $(this).find('> .feedbackCon > .blog_comment_body').append('<img class="user-avatar" src="'+avatar+'"/>')
+    });
+}
+$(document).ajaxComplete(function(event, xhr, settings) {
+  // 监听获取评论ajax事件
+  if(settings.url.indexOf('/mvc/blog/GetComments.aspx') >= 0) {
+    initCommentData();
+  }
+});
+</script>
+
+<!--回到顶部小火箭 -->
+<link href="https://blog-static.cnblogs.com/files/qiuhom-1874/scroller.css" type="text/css" rel="stylesheet">
+ <script src="https://blog-static.cnblogs.com/files/qiuhom-1874/scrollspy.js" type="text/javascript"></script>
+ <script src="https://blog-static.cnblogs.com/files/qiuhom-1874/stickUp.min.js" type="text/javascript"></script>
+<style>
+#back-top {
+     position: fixed;
+     bottom: 10px;
+     right: 5px;
+     z-index: 99;
+}
+#back-top span {
+     width: 50px;
+     height: 64px;
+     display: block;
+     background:url(https://images.cnblogs.com/cnblogs_com/qiuhom-1874/1640280/o_200201115539hj.png) no-repeat center center;
+}
+#back-top a{outline:none}
+</style>
+<script type="text/javascript">
+$(function() {
+    // hide #back-top first
+    $("#back-top").hide();
+    // fade in #back-top
+    $(window).scroll(function() {
+        if ($(this).scrollTop() > 500) {
+            $('#back-top').fadeIn();
+        } else {
+            $('#back-top').fadeOut();
+        }
+    });
+    // scroll body to 0px on click
+    $('#back-top a').click(function() {
+        $('body,html').animate({
+            scrollTop: 0
+        }, 800);
+        return false;
+    });
+});
+</script>
+<p id="back-top" style="display:none"><a href="#top"><span></span></a></p>
+
+<!-- lightbox的样式 -->
+<link href="https://blog-static.cnblogs.com/files/qiuhom-1874/lightbox.css" rel="stylesheet">
+<!-- lightbox.js核心代码 -->
+<script src="https://blog-static.cnblogs.com/files/qiuhom-1874/lightbox-plus-jquery.js"></script>
+<script type='text/javascript'>$('#cnblogs_post_body img').wrap(function(){return "<a href='"+$(this).attr("src")+"' data-lightbox='example-set'></a>"});</script>
+<script type='text/javascript'>$(".code_img_closed").unwrap();</script>
+<script type='text/javascript'>$(".code_img_opened").unwrap();</script>
+
+
+
+    </div>
+</body>
+</html>

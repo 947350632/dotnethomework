@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="description" content="熵，一个神奇的工具，用来衡量数据集信息量的不确定性。 首先，我们先来了解一个指标，信息量。对于任意一个随机变量X，样本空间为{X1,X2，...,Xn},对于任意的样本Xi，样本Xi的信息量也就是l(" />
+    <meta property="og:description" content="熵，一个神奇的工具，用来衡量数据集信息量的不确定性。 首先，我们先来了解一个指标，信息量。对于任意一个随机变量X，样本空间为{X1,X2，...,Xn},对于任意的样本Xi，样本Xi的信息量也就是l(" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>决策树详解，从熵说起 - 极无止境 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    <link id="MainCss" rel="stylesheet" href="/skins/sea/bundle-sea.min.css?v=oF2SvRIFQNTLcLgn66nPy-bOeZ-5NDS8tPrc0Kt42ys" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/sea/bundle-sea-mobile.min.css?v=hwOMApLxOSzs6OyhZ7e8nLo8ijIJV8spG9Uwn_yefqQ" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/zhuangxp2008/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/zhuangxp2008/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/zhuangxp2008/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 634482;
+        var currentBlogApp = 'zhuangxp2008';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'sea';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 10:40';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    
+    
+    
+</head>
+<body class="has-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    <!--done-->
+<div id="header">
+	
+<!--done-->
+<div class="header">
+	<div class="headerText">
+		<a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/zhuangxp2008/">极无止境</a>
+<br>
+		
+
+
+	</div>
+</div>
+
+
+</div>
+
+<div id="mytopmenu">
+	
+		<div id="mylinks">
+<a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+ &nbsp;
+
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/zhuangxp2008/">
+首页</a>
+ &nbsp;
+
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+ &nbsp;
+
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/%E6%9E%81%E6%97%A0%E6%AD%A2%E5%A2%83">
+联系</a> &nbsp;
+
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/zhuangxp2008/rss/">
+订阅</a>
+<a id="blog_nav_rss_image" href="https://www.cnblogs.com/zhuangxp2008/rss/">
+    <img src="/skins/sea/images/xml.gif" alt="订阅" />
+</a>&nbsp;
+
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+
+
+</div>
+		<DIV id="mystats">随笔 -
+
+2&nbsp;
+文章 -
+
+2&nbsp;
+评论 -
+
+0&nbsp;
+<!--trackbacks-<partial name="./Shared/_PingTrackCount.cshtml" model="BlogServer.Web.Models.DetailBlogPage" />-->
+</DIV>
+	
+</div>
+<div id="centercontent">
+	<div id="post_detail">
+<div class="post">
+	<h1 class = "postTitle">
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhuangxp2008/p/13875738.html">
+    <span>决策树详解，从熵说起</span>
+    
+
+
+</a>
+</h1>
+	
+<div id="cnblogs_post_body" class="blogpost-body">
+    <p class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">　　熵，一个神奇的工具，用来衡量数据集信息量的不确定性。</p>
+<p class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">　　首先，我们先来了解一个指标，信息量。对于任意一个随机变量X，样本空间为{X1,X2，...,Xn},对于任意的样本Xi，样本X<sub class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">i</sub>的信息量也就是l(X<sub class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">i</sub>) = -log(p(Xi))。由于p(Xi)是为样本Xi的概率，也可以说是类X<sub class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">i</sub>的概率，那么l(X<sub class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">i</sub>)的取值范围为(+∞，0]。也就是X的的概率越小，其含有的信息量越大，反之亦然。这也不难理解，X<sub class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">i</sub>的发生的概率越大，我们对他的了解越深，那么他所含有的信息量就越小。如果随机变量X是常量，那么我们从任意一个Xi都可以获取样本空间的值，那么我们可以认为X没有任何信息量，他的信息量为0。如果说，我们要把随机变量X样本空间都了解完，才能获得X的信息，那么我们可以认为X的信息量“无穷大”，其取值为log（2，n)。</p>
+<p class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">　　紧接着，我们就提出了随机变量X的信息熵，也就是信息量的期望，H(X) =&nbsp;-∑<sup class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">n</sup><sub class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">i=1</sub>p(Xi)log<sub class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">2</sub>(p(Xi))，从离散的角度得出的公式。他有三个特性：</p>
+<div class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">
+<div class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">
+<ul class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">
+<li class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">单调性，即发生概率越高的事件，其所携带的信息熵越低。极端案例就是“太阳从东方升起”，因为为确定事件，所以不携带任何信息量。从信息论的角度，认为这句话没有消除任何不确定性。也就是样本空间的p(Xi)均为1。</li>
+<li class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">非负性，即信息熵不能为负。这个很好理解，因为负的信息，即你得知了某个信息后，却增加了不确定性是不合逻辑的。</li>
+<li class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">累加性，即多随机事件同时发生存在的总不确定性的量度是可以表示为各事件不确定性的量度的和。</li>
+</ul>
+<p class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">　　有了熵这个基础，那么我们就要考虑决策树是怎么生成的了。对于随机变量X的样本个数为n的空间，每个样本都有若干个相同的特征，假设有k个。对于任意一个特征，我们可以对其进行划分，假设含有性别变量，那么切分后，性别特征消失，变为确定的值，那么随机变量X信息的不确定性减少。以此类推，直到达到我们想要的结果结束，这样就生成了若干棵树，每棵树的不确定性降低。如果我们在此过程中进行限制，每次减少的不确定性最大，那么这样一步一步下来，我们得到的树，会最快的把不确定性降低到最小。每颗树的分支，都可以确定一个类别，包含的信息量极少，确定性极大，这种类别，是可以进行预测的，不确定性小，稳定，可以用于预测。</p>
+<p class="UCUNNIC UCNightMode_transparentBkg UCUNNIC_Done">&nbsp; &nbsp; &nbsp; &nbsp; 有了以上的知识储备，那么我们要想生成一颗决策树，只需要每次把特征的信息量最大的那个找出来进行划分即可。也就是不确定性最大的那个分支，我们要优先划分。这就会得出另外一个定义，条件信息熵。也就是我的</p>
+</div>
+</div>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+	<div class="postDesc">posted on 
+<span id="post-date">2020-10-25 22:40</span>&nbsp;
+<a href="https://www.cnblogs.com/zhuangxp2008/">极无止境</a>&nbsp;
+阅读(<span id="post_view_count">7</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13875738" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13875738);return false;">收藏</a></div>
+</div>
+
+
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 634482, cb_blogApp = 'zhuangxp2008', cb_blogUserGuid = '6263a962-53d9-4662-fcb4-08d854946cb3';
+    var cb_entryId = 13875738, cb_entryCreatedDate = '2020-10-25 22:40', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+</div>
+
+
+</div>
+<div id="leftcontent">
+	
+		<DIV id="leftcontentcontainer">
+			<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+			<div id="calendar"><div id="blog-calendar" style="display:none"></div></div>                
+                    <script>loadBlogDefaultCalendar();</script><br>
+			<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script></DIV>
+	
+</div>
+<!--done-->
+<div class="footer">
+	Powered by: <a href="http://www.cnblogs.com">博客园</a>
+	Copyright &copy; 2020 极无止境
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+</div>
+
+
+
+
+
+
+    
+</body>
+</html>

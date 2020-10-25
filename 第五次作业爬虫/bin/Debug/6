@@ -1,0 +1,1533 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="description" content="正文 一、桥接模式 1、定义 桥接模式通过将实现和抽象分离开来，放在两个不同的类层次中，从而使得它们可以独立改变。 要点： 当一个类存在两个独立变化的维度，而且都需要进行扩展时，可以将其中一个维度抽象" />
+    <meta property="og:description" content="正文 一、桥接模式 1、定义 桥接模式通过将实现和抽象分离开来，放在两个不同的类层次中，从而使得它们可以独立改变。 要点： 当一个类存在两个独立变化的维度，而且都需要进行扩展时，可以将其中一个维度抽象" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>《Head First 设计模式》：剩下的模式 - 惊却一目 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    <link id="MainCss" rel="stylesheet" href="/skins/coffee/bundle-coffee.min.css?v=F9ODK0b_BexrGFuzwObB8A2Gx3VnPgTALBeh3BNdKdg" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/coffee/bundle-coffee-mobile.min.css?v=_A34W8fnMJT0tcRq18x5CRz6GYA4gZvedLXGAkdf2Ms" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/jingqueyimu/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/jingqueyimu/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/jingqueyimu/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 565815;
+        var currentBlogApp = 'jingqueyimu';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'coffee';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 10:43';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    
+    
+    
+</head>
+<body class="has-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a href="https://www.cnblogs.com/jingqueyimu/"><img id="blogLogo" src="/skins/custom/images/logo.gif" alt="返回主页" /></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/jingqueyimu/">惊却一目</a>
+</h1>
+<h2>
+个人博客：www.jingqueyimu.com
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="navigator">
+			
+<ul id="navList">
+	<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+	<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/jingqueyimu/">
+首页</a>
+</li>
+	<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+	<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/%E6%83%8A%E5%8D%B4%E4%B8%80%E7%9B%AE">
+联系</a></li>
+	<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+	<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/jingqueyimu/rss/">
+订阅</a>
+	
+<a id="blog_nav_rss_image" href="https://www.cnblogs.com/jingqueyimu/rss/">
+    <img src="/skins/coffee/images/xml.gif" alt="订阅" />
+</a></li>
+</ul>
+
+
+
+			<div class="blogStats">
+				
+				<!--done-->
+随笔- 
+26&nbsp;
+文章- 
+0&nbsp;
+评论- 
+0&nbsp;
+
+
+
+				
+			</div><!--end: blogStats -->
+		</div><!--end: navigator 博客导航栏 -->
+		<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class = "postTitle">
+			
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jingqueyimu/p/13875760.html">
+    <span>《Head First 设计模式》：剩下的模式</span>
+    
+
+
+</a>
+
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+    <h1 id="正文">正文</h1>
+<h2 id="一、桥接模式">一、桥接模式</h2>
+<h3 id="1、定义">1、定义</h3>
+<p>桥接模式通过将实现和抽象分离开来，放在两个不同的类层次中，从而使得它们可以独立改变。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>当一个类存在两个独立变化的维度，而且都需要进行扩展时，可以将其中一个维度抽象化，另一个维度实现化。</li>
+<li>抽象化就是通过抽象类来实现多态，实现化则是通过接口来实现多态。</li>
+<li>桥接模式通过在抽象类中持有实现类接口，来将两个维度“桥接”起来。</li>
+</ul>
+<h3 id="2、实现步骤">2、实现步骤</h3>
+<h4 id="（1）创建实现化角色接口">（1）创建实现化角色接口</h4>
+<pre><code>/**
+ * 实现化角色接口
+ */
+public interface Implementor {
+
+    void action();
+}
+</code></pre>
+<h4 id="（2）创建具体实现化角色">（2）创建具体实现化角色</h4>
+<pre><code>/**
+ * 具体实现化角色A
+ */
+public class ConcreteImplementorA implements Implementor {
+
+    @Override
+    public void action() {
+        System.out.println("ConcreteImplementorA action");
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 具体实现化角色B
+ */
+public class ConcreteImplementorB implements Implementor {
+
+    @Override
+    public void action() {
+        System.out.println("ConcreteImplementorB action");
+    }
+}
+</code></pre>
+<h4 id="（3）创建抽象化角色抽象类，并持有实现化角色接口">（3）创建抽象化角色抽象类，并持有实现化角色接口</h4>
+<pre><code>/**
+ * 抽象化角色抽象类
+ */
+public abstract class Abstraction {
+
+    /**
+     * 实现化角色接口
+     */
+    Implementor implementor;
+    
+    public Abstraction(Implementor implementor) {
+        this.implementor = implementor;
+    }
+    
+    public abstract void action();
+}
+</code></pre>
+<h4 id="（4）创建具体抽象化角色">（4）创建具体抽象化角色</h4>
+<pre><code>/**
+ * 具体抽象化角色A
+ */
+public class ConcreteAbstractionA extends Abstraction {
+
+    public ConcreteAbstractionA(Implementor implementor) {
+        super(implementor);
+    }
+    
+    @Override
+    public void action() {
+        System.out.print("ConcreteAbstractionA action --&gt; ");
+        // 调用实现化角色的方法
+        implementor.action();
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 具体抽象化角色B
+ */
+public class ConcreteAbstractionB extends Abstraction {
+
+    public ConcreteAbstractionB(Implementor implementor) {
+        super(implementor);
+    }
+    
+    @Override
+    public void action() {
+        System.out.print("ConcreteAbstractionB action --&gt; ");
+        // 调用实现化角色的方法
+        implementor.action();
+    }
+}
+</code></pre>
+<h4 id="（5）组合抽象化角色与实现化角色">（5）组合抽象化角色与实现化角色</h4>
+<p>通过组合抽象化角色与实现化角色，来实现更多的功能。</p>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        // 实现化角色
+        Implementor implementorA = new ConcreteImplementorA();
+        Implementor implementorB = new ConcreteImplementorB();
+        // 抽象化角色
+        Abstraction abstractionAA = new ConcreteAbstractionA(implementorA);
+        Abstraction abstractionAB = new ConcreteAbstractionA(implementorB);
+        Abstraction abstractionBA = new ConcreteAbstractionB(implementorA);
+        Abstraction abstractionBB = new ConcreteAbstractionB(implementorB);
+        // 请求动作
+        abstractionAA.action();
+        abstractionAB.action();
+        abstractionBA.action();
+        abstractionBB.action();
+    }
+}
+</code></pre>
+<h2 id="二、生成器模式（建造者模式）">二、生成器模式（建造者模式）</h2>
+<h3 id="1、定义-2">1、定义</h3>
+<p>生成器模式封装一个产品的构造过程，并允许按步骤构造。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>将一个复杂对象的创建过程封装起来。</li>
+<li>允许对象通过多个步骤来创建，并且可以改变过程（这和只有一个步骤的工厂模式不同）。</li>
+</ul>
+<h3 id="2、实现步骤-2">2、实现步骤</h3>
+<h4 id="（1）创建产品类">（1）创建产品类</h4>
+<pre><code>/**
+ * 产品
+ */
+public class Product {
+
+    /**
+     * 产品部件1
+     */
+    private String part1;
+    
+    /**
+     * 产品部件2
+     */
+    private String part2;
+    
+    /**
+     * 产品部件3
+     */
+    private String part3;
+
+    public String getPart1() {
+        return part1;
+    }
+
+    public void setPart1(String part1) {
+        this.part1 = part1;
+    }
+
+    public String getPart2() {
+        return part2;
+    }
+
+    public void setPart2(String part2) {
+        this.part2 = part2;
+    }
+
+    public String getPart3() {
+        return part3;
+    }
+
+    public void setPart3(String part3) {
+        this.part3 = part3;
+    }
+
+    @Override
+    public String toString() {
+        return "Product [part1=" + part1 + ", part2=" + part2 + ", part3=" + part3 + "]";
+    }
+}
+</code></pre>
+<h4 id="（2）创建生成器抽象类">（2）创建生成器抽象类</h4>
+<pre><code>/**
+ * 生成器抽象类
+ */
+public abstract class Builder {
+
+    protected Product product = new Product();
+    
+    public abstract void buildPart1();
+    
+    public abstract void buildPart2();
+    
+    public abstract void buildPart3();
+    
+    /**
+     * 获取产品
+     */
+    public Product getProduct() {
+        return product;
+    }
+}
+</code></pre>
+<h4 id="（3）创建具体生成器">（3）创建具体生成器</h4>
+<pre><code>/**
+ * 具体生成器
+ */
+public class ConcreteBuilder extends Builder {
+
+    @Override
+    public void buildPart1() {
+        product.setPart1("product part 1");
+    }
+
+    @Override
+    public void buildPart2() {
+        product.setPart2("product part 2");        
+    }
+
+    @Override
+    public void buildPart3() {
+        product.setPart3("product part 3");        
+    }
+}
+</code></pre>
+<h4 id="（4）使用生成器生成产品">（4）使用生成器生成产品</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        // 生成器
+        Builder builder = new ConcreteBuilder();
+        // 生成产品
+        builder.buildPart1();
+        builder.buildPart2();
+        builder.buildPart3();
+        // 获取产品
+        Product product = builder.getProduct();
+        System.out.println(product);
+    }
+}
+</code></pre>
+<h2 id="三、责任链模式">三、责任链模式</h2>
+<h3 id="1、定义-3">1、定义</h3>
+<p>责任链模式为某个请求创建一个对象链。每个对象依序检查此请求，并对其进行处理，或者将它传给链中的下一个对象。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>将请求的发送者和接受者解耦。</li>
+<li>通过改变链内成员或调动它们的次序，允许你动态地新增或删除责任。</li>
+</ul>
+<h3 id="2、实现步骤-3">2、实现步骤</h3>
+<h4 id="（1）创建请求数据包类">（1）创建请求数据包类</h4>
+<pre><code>/**
+ * 请求数据包
+ */
+public class Request {
+
+    /**
+     * 级别
+     */
+    private int level;
+    
+    /**
+     * 数据
+     */
+    private String data;
+    
+    public Request(int level, String data) {
+        this.level = level;
+        this.data = data;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+}
+</code></pre>
+<h4 id="（2）创建处理器抽象类">（2）创建处理器抽象类</h4>
+<pre><code>/**
+ * 处理器抽象类
+ */
+public abstract class Handler {
+
+    /**
+     * 下一个处理器
+     */
+    protected Handler nextHandler;
+    
+    public Handler getNextHandler() {
+        return nextHandler;
+    }
+
+    public void setNextHandler(Handler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+
+    /**
+     * 处理请求
+     */
+    protected abstract void handleRequest(Request request);
+}
+</code></pre>
+<h4 id="（3）创建具体处理器">（3）创建具体处理器</h4>
+<pre><code>/**
+ * 具体处理器A
+ */
+public class ConcreteHandlerA extends Handler {
+
+    @Override
+    protected void handleRequest(Request request) {
+        if (request.getLevel() &lt;= 1) {
+            System.out.println("ConcreteHandlerA is handling the request, data: " + request.getData());
+        } else {
+            getNextHandler().handleRequest(request);
+        }
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 具体处理器B
+ */
+public class ConcreteHandlerB extends Handler {
+
+    @Override
+    protected void handleRequest(Request request) {
+        if (request.getLevel() &lt;= 2) {
+            System.out.println("ConcreteHandlerB is handling the request, data: " + request.getData());
+        } else {
+            getNextHandler().handleRequest(request);
+        }
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 具体处理器C
+ */
+public class ConcreteHandlerC extends Handler {
+
+    @Override
+    protected void handleRequest(Request request) {
+        if (request.getLevel() &lt;= 3) {
+            System.out.println("ConcreteHandlerC is handling the request, data: " + request.getData());
+        } else {
+            System.out.println("No handler can handle the request...");
+        }
+    }
+}
+</code></pre>
+<h4 id="（4）使用处理器链处理请求">（4）使用处理器链处理请求</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        // 创建责任链（处理器链）
+        Handler handlerA = new ConcreteHandlerA();
+        Handler handlerB = new ConcreteHandlerB();
+        Handler handlerC = new ConcreteHandlerC();
+        handlerA.setNextHandler(handlerB);
+        handlerB.setNextHandler(handlerC);
+        // 使用责任链处理请求
+        handlerA.handleRequest(new Request(1, "请求1"));
+        handlerA.handleRequest(new Request(2, "请求2"));
+        handlerA.handleRequest(new Request(3, "请求3"));
+        handlerA.handleRequest(new Request(4, "请求4"));
+    }
+}
+</code></pre>
+<h2 id="四、蝇量模式（享元模式）">四、蝇量模式（享元模式）</h2>
+<h3 id="1、定义-4">1、定义</h3>
+<p>蝇量模式能让某个类的一个实例能用来提供许多“虚拟实例”。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>运用共享技术，减少运行时对象实例的个数，节省内存。</li>
+<li>当一个类有许多实例，而这些实例能被同一个方法控制时，可以使用蝇量模式。</li>
+</ul>
+<h3 id="2、实现步骤-4">2、实现步骤</h3>
+<h4 id="（1）创建抽象蝇量类">（1）创建抽象蝇量类</h4>
+<pre><code>/**
+ * 抽象蝇量类
+ */
+public abstract class Flyweight {
+
+    /**
+     * 共享状态（所有实例共有的、一致的状态）
+     */
+    public String sharedState;
+
+    /**
+     * 非共享状态（不同实例间不共有、或者不一致的状态）
+     */
+    public final String unsharedState;
+    
+    public Flyweight(String unsharedState) {
+        this.unsharedState = unsharedState;
+    }
+    
+    public abstract void operate();
+}
+</code></pre>
+<h4 id="（2）创建具体蝇量类">（2）创建具体蝇量类</h4>
+<pre><code>/**
+ * 具体蝇量类
+ */
+public class ConcreteFlyweight extends Flyweight {
+
+    public ConcreteFlyweight(String unsharedState) {
+        super(unsharedState);
+        sharedState = "Shared State";
+    }
+
+    @Override
+    public void operate() {
+        System.out.println("ConcreteFlyweight is operating. [sharedState: " + sharedState + ", unsharedState: " + unsharedState + "]");
+    }
+}
+</code></pre>
+<h4 id="（3）创建蝇量类工厂">（3）创建蝇量类工厂</h4>
+<pre><code>/**
+ * 蝇量类工厂
+ */
+public class FlyweightFactory {
+
+    /**
+     * 池容器
+     */
+    private static HashMap&lt;String, Flyweight&gt; pool = new HashMap&lt;&gt;();
+    
+    /**
+     * 获取蝇量类实例
+     */
+    public static Flyweight getFlyweight(String unsharedState) {
+        // 从池中取出蝇量类实例
+        Flyweight flyweight = pool.get(unsharedState);
+        if (flyweight == null) {
+            // 创建蝇量类实例,并放入池中
+            System.out.println("Create flyweight instance, and put into the pool：" + unsharedState);
+            flyweight = new ConcreteFlyweight(unsharedState);
+            pool.put(unsharedState, flyweight);
+        } else {
+            System.out.println("Get flyweight instance from the pool：" + unsharedState);
+        }
+        return flyweight;
+    }
+}
+</code></pre>
+<h4 id="（4）使用蝇量类工厂创建蝇量类">（4）使用蝇量类工厂创建蝇量类</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        // 从工厂获取蝇量类实例，并执行操作
+        Flyweight flyweight1 = FlyweightFactory.getFlyweight("Unshared State A");
+        flyweight1.operate();
+        System.out.println();
+        Flyweight flyweight2 = FlyweightFactory.getFlyweight("Unshared State B");
+        flyweight2.operate();
+        System.out.println();
+        Flyweight flyweight3 = FlyweightFactory.getFlyweight("Unshared State A");
+        flyweight3.operate();
+    }
+}
+</code></pre>
+<h2 id="五、解释器模式">五、解释器模式</h2>
+<h3 id="1、定义-5">1、定义</h3>
+<p>解释器模式将每一个语法规则表示成一个类。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>当你需要实现一个简单的语言时，就使用解释器。</li>
+<li>解释器模式的每一个语法规则对应一个表达式类，表达式包含终结符表达式和非终结符表达式。</li>
+<li>终结符表达式对应的语法规则不可再分解，因此终结符表达式的解释方法不会调用其他表达式的解释方法。</li>
+<li>非终结符表达式对应的语法规则可以分解为其他语法规则，因此非终结符表达式的解释方法会调用到其他表达式的解释方法。</li>
+</ul>
+<h3 id="2、实现步骤-5">2、实现步骤</h3>
+<h4 id="（1）创建上下文环境类">（1）创建上下文环境类</h4>
+<pre><code>/**
+ * 上下文环境（运行环境）
+ * 用于管理全局信息
+ */
+public class Context {
+    
+    // TODO 处理全局信息的相关方法
+    
+    /**
+     * 运行
+     */
+    public void run(String data) {
+        // 调用相关表达式的解释方法
+        Expression terminal1 = new TerminalExpression(data);
+        Expression terminal2 = new TerminalExpression(data);
+        Expression nonterminal = new NonterminalExpression(terminal1, terminal2);
+        nonterminal.interpret(this);
+    }
+}
+</code></pre>
+<h4 id="（2）创建表达式接口">（2）创建表达式接口</h4>
+<pre><code>/**
+ * 表达式接口
+ */
+public interface Expression {
+
+    /**
+     * 执行解释
+     */
+    public void interpret(Context context);
+}
+</code></pre>
+<h4 id="（3）创建具体表达式">（3）创建具体表达式</h4>
+<pre><code>/**
+ * 终结符表达式
+ */
+public class TerminalExpression implements Expression {
+    
+    private String data;
+    
+    public TerminalExpression(String data) {
+        this.data = data;
+    }
+    
+    @Override
+    public void interpret(Context context) {
+        System.out.println("TerminalExpression is interpreting data: " + data);
+        // TODO 进行解释操作，终结符表达式不会调用其他表达式的解释方法
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 非终结符表达式
+ */
+public class NonterminalExpression implements Expression {
+
+    private Expression exp1;
+    private Expression exp2;
+    
+    public NonterminalExpression(Expression exp1, Expression exp2) {
+        this.exp1 = exp1;
+        this.exp2 = exp2;
+    }
+    
+    @Override
+    public void interpret(Context context) {
+        System.out.println("NonterminalExpression is interpreting...");
+        // 调用其他表达式的解释方法
+        exp1.interpret(context);
+        exp2.interpret(context);
+    }
+}
+</code></pre>
+<h4 id="（4）使用表达式解释数据">（4）使用表达式解释数据</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        Context context = new Context();
+        context.run("I like cat");
+    }
+}
+</code></pre>
+<h3 id="3、举个栗子">3、举个栗子</h3>
+<p>创建一个解释“二元运算代码”的解释器。</p>
+<p>代码格式：算术表达式; 变量赋值1; 变量赋值2。</p>
+<p>代码例子：a + b; a = 1; b = 2。</p>
+<h4 id="（1）创建上下文环境类-2">（1）创建上下文环境类</h4>
+<pre><code>/**
+ * 上下文环境（运行环境）
+ * 用于管理全局信息
+ */
+public class Context {
+    
+    /**
+     * 数据池
+     */
+    private static Map&lt;Expression, Integer&gt; dataPool =  new HashMap&lt;Expression, Integer&gt;();
+    
+    /**
+     * 赋值
+     */
+    public void assign(Expression var, int value) {
+        dataPool.put(var, value);
+    }
+    
+    /**
+     * 取值
+     */
+    public int lookup(Expression var) {
+        Integer value = dataPool.get(var);
+        return value == null ? 0 : value;
+    }
+    
+    /**
+     * 运行代码
+     */
+    public int run(String code) {
+        return new CodeExpression(code).interpret(this);
+    }
+}
+</code></pre>
+<h4 id="（2）创建抽象表达式">（2）创建抽象表达式</h4>
+<pre><code>/**
+ * 抽象表达式
+ */
+public abstract class Expression {
+
+    protected String code;
+    
+    public Expression(String code) {
+        this.code = code;
+    }
+    
+    /**
+     * 执行解释
+     */
+    public abstract int interpret(Context context);
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Expression) {
+            return this.code.equals(((Expression) obj).code);
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return code.hashCode();
+    }
+}
+</code></pre>
+<h4 id="（3）创建解释二元运算代码的具体表达式">（3）创建解释“二元运算代码”的具体表达式</h4>
+<pre><code>/**
+ * 代码表达式
+ */
+public class CodeExpression extends Expression {
+
+    public CodeExpression(String code) {
+        super(code);
+    }
+
+    @Override
+    public int interpret(Context context) {
+        // 代码格式: 算术表达式; 变量赋值1; 变量赋值2
+        // 代码例子: a + b; a = 1; b = 2
+        String[] codes = code.split("; ");
+        // 算术表达式
+        ArithExpression arith = new ArithExpression(codes[0]);
+        // 赋值表达式
+        AssignExpression assign = null;
+        for (int i = 1; i &lt; codes.length; i++) {
+            assign = new AssignExpression(codes[i]);
+            assign.interpret(context);
+        }
+        return arith.interpret(context);
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 算术表达式
+ */
+public class ArithExpression extends Expression {
+
+    public ArithExpression(String code) {
+        super(code);
+    }
+
+    @Override
+    public int interpret(Context context) {
+        // a + b
+        // 以"空格"分隔变量与运算符
+        String[] codes = code.split(" ");
+        // 变量表达式
+        VarExpression var1 = new VarExpression(codes[0]);
+        VarExpression var2 = new VarExpression(codes[2]);
+        // 运算符表达式
+        OperatorExpression operator = new OperatorExpression(var1, codes[1], var2);
+        return operator.interpret(context);
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 赋值表达式
+ */
+public class AssignExpression extends Expression {
+
+    public AssignExpression(String code) {
+        super(code);
+    }
+
+    @Override
+    public int interpret(Context context) {
+        // a = 1
+        // 以"空格等号空格"分隔变量与数值
+        String[] codes = code.split(" = ");
+        // 变量表达式
+        VarExpression var = new VarExpression(codes[0]);
+        // 变量赋值
+        context.assign(var, Integer.parseInt(codes[1]));
+        return 0;
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 变量表达式
+ */
+public class VarExpression extends Expression {
+
+    public VarExpression(String code) {
+        super(code);
+    }
+
+    @Override
+    public int interpret(Context context) {
+        return context.lookup(this);
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 运算符表达式
+ */
+public class OperatorExpression extends Expression {
+
+    Expression var1;
+    Expression var2;
+    
+    public OperatorExpression(Expression var1, String code, Expression var2) {
+        super(code);
+        this.var1 = var1;
+        this.var2 = var2;
+    }
+
+    @Override
+    public int interpret(Context context) {
+        OperatorExpression operator = null;
+        switch (code) {
+        case "+":
+            operator = new AddExpression(var1, var2);
+            break;
+        case "-":
+            operator = new SubExpression(var1, var2);
+            break;
+        default:
+            throw new RuntimeException("暂不支持该运算");
+        }
+        return operator.interpret(context);
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 加法表达式
+ */
+public class AddExpression extends OperatorExpression {
+
+    public AddExpression(Expression var1, Expression var2) {
+        super(var1, "+", var2);
+    }
+
+    @Override
+    public int interpret(Context context) {
+        return var1.interpret(context) + var2.interpret(context);
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 减法表达式
+ */
+public class SubExpression extends OperatorExpression {
+
+    public SubExpression(Expression var1, Expression var2) {
+        super(var1, "-", var2);
+    }
+
+    @Override
+    public int interpret(Context context) {
+        return var1.interpret(context) - var2.interpret(context);
+    }
+}
+</code></pre>
+<h4 id="（4）使用表达式解释二元运算代码">（4）使用表达式解释“二元运算代码”</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        // 上下文环境
+        Context context = new Context();
+        // 运行代码
+        int result = context.run("a + b; a = 1; b = 2");
+        System.out.println("结果1：" + result);
+        result = context.run("a - b; a = 7; b = 2");
+        System.out.println("结果2：" + result);
+    }
+}
+</code></pre>
+<h2 id="六、中介者模式">六、中介者模式</h2>
+<h3 id="1、定义-6">1、定义</h3>
+<p>中介者模式用于集中相关对象之间复杂的沟通和控制方式。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>通过将对象彼此解耦，可以增加对象的复用性。</li>
+<li>每个对象都会在自己状态改变时，告诉中介者。</li>
+<li>每个对象都会对中介者所发出的请求做出回应。</li>
+</ul>
+<h3 id="2、实现步骤-6">2、实现步骤</h3>
+<h4 id="（1）创建交互对象抽象类">（1）创建交互对象抽象类</h4>
+<pre><code>/**
+ * 交互对象抽象类
+ */
+public abstract class InteractiveObject {
+
+    protected Mediator mediator;
+    
+    public InteractiveObject(Mediator mediator) {
+        this.mediator = mediator;
+    }
+    
+    /**
+     * 发送信息
+     */
+    public abstract void send(String msg);
+    
+    /**
+     * 接收信息
+     */
+    public abstract void receive(String msg);
+}
+</code></pre>
+<h4 id="（2）创建具体交互对象">（2）创建具体交互对象</h4>
+<pre><code>/**
+ * 具体交互对象A
+ */
+public class ConcreteInteractiveObjectA extends InteractiveObject {
+
+    public ConcreteInteractiveObjectA(Mediator mediator) {
+        super(mediator);
+    }
+
+    @Override
+    public void send(String msg) {
+        System.out.println("ConcreteInteractiveObjectA has sended message: " + msg);
+        mediator.forward(this, msg);
+    }
+
+    @Override
+    public void receive(String msg) {
+        System.out.println("ConcreteInteractiveObjectA has received message: " + msg);
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 具体交互对象B
+ */
+public class ConcreteInteractiveObjectB extends InteractiveObject {
+
+    public ConcreteInteractiveObjectB(Mediator mediator) {
+        super(mediator);
+    }
+
+    @Override
+    public void send(String msg) {
+        System.out.println("ConcreteInteractiveObjectB has sended message: " + msg);
+        mediator.forward(this, msg);
+    }
+
+    @Override
+    public void receive(String msg) {
+        System.out.println("ConcreteInteractiveObjectB has received message: " + msg);
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 具体交互对象C
+ */
+public class ConcreteInteractiveObjectC extends InteractiveObject {
+
+    public ConcreteInteractiveObjectC(Mediator mediator) {
+        super(mediator);
+    }
+
+    @Override
+    public void send(String msg) {
+        System.out.println("ConcreteInteractiveObjectC has sended message: " + msg);
+        mediator.forward(this, msg);
+    }
+
+    @Override
+    public void receive(String msg) {
+        System.out.println("ConcreteInteractiveObjectC has received message: " + msg);
+    }
+}
+</code></pre>
+<h4 id="（3）创建中介者抽象类">（3）创建中介者抽象类</h4>
+<pre><code>/**
+ * 中介者抽象类
+ */
+public abstract class Mediator {
+    
+    /**
+     * 注册交互对象
+     */
+    public abstract void register(InteractiveObject obj);
+    
+    /**
+     * 转发信息
+     */
+    public abstract void forward(InteractiveObject obj, String msg);
+}
+</code></pre>
+<h4 id="（4）创建具体中介者">（4）创建具体中介者</h4>
+<pre><code>/**
+ * 具体中介者
+ */
+public class ConcreteMediator extends Mediator {
+
+    /**
+     * 交互对象集合
+     */
+    private List&lt;InteractiveObject&gt; interactiveObjs = new ArrayList&lt;&gt;();
+
+    @Override
+    public void register(InteractiveObject obj) {
+        interactiveObjs.add(obj);
+    }
+
+    @Override
+    public void forward(InteractiveObject obj, String msg) {
+        for (InteractiveObject interactiveObj : interactiveObjs) {
+            if (!interactiveObj.equals(obj)) {
+                interactiveObj.receive(msg);
+            }
+        }
+    }
+}
+</code></pre>
+<h4 id="（5）使用中介者管理交互对象之间的交互">（5）使用中介者管理交互对象之间的交互</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        // 中介者
+        Mediator mediator = new ConcreteMediator();
+        // 交互对象
+        InteractiveObject objA = new ConcreteInteractiveObjectA(mediator);
+        InteractiveObject objB = new ConcreteInteractiveObjectB(mediator);
+        InteractiveObject objC = new ConcreteInteractiveObjectC(mediator);
+        // 注册交互对象到中介者
+        mediator.register(objA);
+        mediator.register(objB);
+        mediator.register(objC);
+        // 发送信息
+        objA.send("hello");
+    }
+}
+</code></pre>
+<h2 id="七、备忘录模式">七、备忘录模式</h2>
+<h3 id="1、定义-7">1、定义</h3>
+<p>备忘录模式通过将状态存储在对象外部，使得对象可以返回之前的状态。</p>
+<h3 id="2、实现步骤-7">2、实现步骤</h3>
+<h4 id="（1）创建备忘录">（1）创建备忘录</h4>
+<pre><code>/**
+ * 备忘录
+ */
+public class Memento {
+
+    private String state;
+
+    public Memento(String state) {
+        this.state = state;
+    }
+    
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+}
+</code></pre>
+<h4 id="（2）创建备忘录管理者">（2）创建备忘录管理者</h4>
+<pre><code>/**
+ * 备忘录管理者
+ */
+public class MementoCaretaker {
+
+    private Memento memento;
+
+    public Memento getMemento() {
+        return memento;
+    }
+
+    public void setMemento(Memento memento) {
+        this.memento = memento;
+    }
+}
+</code></pre>
+<h4 id="（3）创建备忘录发起人">（3）创建备忘录发起人</h4>
+<pre><code>/**
+ * 备忘录发起人
+ */
+public class MementoOriginator {
+
+    private String state;
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+    
+    /**
+     * 创建备忘录
+     */
+    public Memento createMemento() {
+        return new Memento(state);
+    }
+    
+    /**
+     * 从备忘录中恢复状态
+     */
+    public void restoreFromMemento(Memento memento) {
+        this.setState(memento.getState());
+    }
+}
+</code></pre>
+<h4 id="（4）使用备忘录存储、恢复状态">（4）使用备忘录存储、恢复状态</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        // 备忘录管理者
+        MementoCaretaker caretaker = new MementoCaretaker();
+        // 备忘录发起人
+        MementoOriginator originator = new MementoOriginator();
+        originator.setState("状态1");
+        System.out.println("初始状态：" + originator.getState());
+        // 备忘录发起人创建备忘录
+        Memento memento = originator.createMemento();
+        // 备忘录管理者保存备忘录
+        caretaker.setMemento(memento);
+        // 备忘录发起人改变状态
+        originator.setState("状态2");
+        System.out.println("新状态：" + originator.getState());
+        // 从备忘录管理者中取出备忘录，并通过备忘录恢复状态
+        originator.restoreFromMemento(caretaker.getMemento());
+        System.out.println("恢复状态：" + originator.getState());
+    }
+}
+</code></pre>
+<h2 id="八、原型模式">八、原型模式</h2>
+<h3 id="1、定义-8">1、定义</h3>
+<p>原型模式允许你通过复制现有的实例来创建新的实例。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>在 Java 中，这通常意味着使用 clone() 方法，或者反序列化。</li>
+</ul>
+<h3 id="2、实现步骤-8">2、实现步骤</h3>
+<h4 id="（1）创建原型类，并实现-cloneable-接口">（1）创建原型类，并实现 Cloneable 接口</h4>
+<pre><code>/**
+ * 原型类（实现Cloneable接口）
+ */
+public class Prototype implements Cloneable {
+
+    public String type;
+    
+    public Prototype(String type) {
+        this.type = type;
+    }
+    
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * 实现clone方法
+     */
+    @Override
+    public Prototype clone() {
+        try {
+            return (Prototype) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Prototype [type=" + type + "]";
+    }
+}
+</code></pre>
+<h4 id="（2）通过复制现有实例，来创建新的实例">（2）通过复制现有实例，来创建新的实例</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        Prototype prototype1 = new Prototype("A");
+        System.out.println(prototype1);
+        // 复制现有实例来创建新的实例
+        Prototype prototype2 = prototype1.clone();
+        System.out.println(prototype2);
+    }
+}
+</code></pre>
+<h2 id="九、访问者模式">九、访问者模式</h2>
+<h3 id="1、定义-9">1、定义</h3>
+<p>访问者模式通过访问数据结构（比如组合结构）中的每个元素，来对元素进行各种操作。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>通过将数据结构与数据操作分离，使得无需改变结构本身，就可以添加作用于结构内的元素的新的操作。</li>
+</ul>
+<h3 id="2、实现步骤-9">2、实现步骤</h3>
+<h4 id="（1）创建元素接口">（1）创建元素接口</h4>
+<p>元素接口中定义了接受访问者访问的方法。</p>
+<pre><code>/**
+ * 元素接口
+ */
+public interface Element {
+
+    /**
+     * 接受访问者访问
+     */
+    public void accept(Visitor visitor);
+}
+</code></pre>
+<h4 id="（2）创建具体元素">（2）创建具体元素</h4>
+<pre><code>/**
+ * 具体元素A
+ */
+public class ConcreteElementA implements Element {
+
+    @Override
+    public void accept(Visitor visitor) {
+        // 具体元素接受访问 -&gt; 访问者访问具体元素
+        visitor.visit(this);
+    }
+    
+    public void operate() {
+        System.out.println("  ConcreteElementA operate");
+    }
+}
+</code></pre>
+<pre><code>/**
+ * 具体元素B
+ */
+public class ConcreteElementB implements Element {
+
+    @Override
+    public void accept(Visitor visitor) {
+        // 具体元素接受访问 -&gt; 访问者访问具体元素
+        visitor.visit(this);
+    }
+    
+    public void operate1() {
+        System.out.println("  ConcreteElementB operate1");
+    }
+    
+    public void operate2() {
+        System.out.println("  ConcreteElementB operate2");
+    }
+}
+</code></pre>
+<h4 id="（3）创建数据结构">（3）创建数据结构</h4>
+<pre><code>/**
+ * 数据结构
+ */
+public class DataStructure {
+
+    private List&lt;Element&gt; elements = new ArrayList&lt;&gt;();
+    
+    public void add(Element element) {
+        elements.add(element);
+    }
+    
+    public void remove(Element element) {
+        elements.remove(element);
+    }
+    
+    /**
+     * 接受访问者访问
+     */
+    public void accept(Visitor visitor) {
+        for (Element element : elements) {
+            element.accept(visitor);
+        }
+    }
+}
+</code></pre>
+<h4 id="（4）创建访问者接口">（4）创建访问者接口</h4>
+<pre><code>/**
+ * 访问者接口
+ */
+public interface Visitor {
+
+    /**
+     * 访问具体元素A
+     */
+    public void visit(ConcreteElementA element);
+    
+    /**
+     * 访问具体元素B
+     */
+    public void visit(ConcreteElementB element);
+}
+</code></pre>
+<h4 id="（5）创建具体访问者">（5）创建具体访问者</h4>
+<pre><code>/**
+ * 具体访问者
+ */
+public class ConcreteVisitor implements Visitor {
+
+    @Override
+    public void visit(ConcreteElementA element) {
+        System.out.println("ConcreteVisitor visit ConcreteElementA:");
+        // 访问者操作元素
+        element.operate();
+    }
+
+    @Override
+    public void visit(ConcreteElementB element) {
+        System.out.println("ConcreteVisitor visit ConcreteElementB:");
+        // 访问者操作元素
+        element.operate1();        
+        element.operate2();        
+    }
+}
+</code></pre>
+<h4 id="（6）使用访问者操作数据结构中的元素">（6）使用访问者操作数据结构中的元素</h4>
+<pre><code>public class Test {
+
+    public static void main(String[] args) {
+        // 数据结构
+        DataStructure dataStructure = new DataStructure();
+        dataStructure.add(new ConcreteElementA());
+        dataStructure.add(new ConcreteElementB());
+        // 访问者
+        Visitor visitor = new ConcreteVisitor();
+        // 数据结构接受访问者访问
+        dataStructure.accept(visitor);
+    }
+}
+</code></pre>
+
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+		</div>
+		<div class="postDesc">posted @ 
+<span id="post-date">2020-10-25 22:43</span>&nbsp;
+<a href="https://www.cnblogs.com/jingqueyimu/">惊却一目</a>&nbsp;
+阅读(<span id="post_view_count">14</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13875760" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13875760);return false;">收藏</a></div>
+	</div>
+	
+	
+</div><!--end: topics 文章、评论容器-->
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 565815, cb_blogApp = 'jingqueyimu', cb_blogUserGuid = 'b9e2ffa8-831b-479b-9b7c-08d69bd2885c';
+    var cb_entryId = 13875760, cb_entryCreatedDate = '2020-10-25 22:43', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+			<div id="calendar"><div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script></div>
+			
+			<DIV id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</DIV>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 惊却一目
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

@@ -1,0 +1,14 @@
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\Crawler\bin\Debug\Crawler.exe.config
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\Crawler\bin\Debug\Crawler.exe
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\Crawler\bin\Debug\Crawler.pdb
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\Crawler\obj\Debug\Crawler.csprojAssemblyReference.cache
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\Crawler\obj\Debug\Crawler.csproj.CoreCompileInputs.cache
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\Crawler\obj\Debug\Crawler.exe
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\Crawler\obj\Debug\Crawler.pdb
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\爬虫\bin\Debug\Crawler.exe.config
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\爬虫\bin\Debug\Crawler.exe
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\爬虫\bin\Debug\Crawler.pdb
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\爬虫\obj\Debug\Crawler.csprojAssemblyReference.cache
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\爬虫\obj\Debug\Crawler.csproj.CoreCompileInputs.cache
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\爬虫\obj\Debug\Crawler.exe
+F:\DotNetHomeWork-master\DotNetHomeWork-master\Week5\爬虫\obj\Debug\Crawler.pdb

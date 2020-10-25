@@ -1,0 +1,393 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="description" content="老孟导读：这是一个读者面试时被问到的问题，这个问题前段时间我也在VIP交流群和大家一起探讨过。 这个问题涉及引擎的相关知识，如果不了解相关知识，很难回答正确，因为不管说调用几次都是错误的，下面来看一下" />
+    <meta property="og:description" content="老孟导读：这是一个读者面试时被问到的问题，这个问题前段时间我也在VIP交流群和大家一起探讨过。 这个问题涉及引擎的相关知识，如果不了解相关知识，很难回答正确，因为不管说调用几次都是错误的，下面来看一下" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>【Flutter 面试】main入口函数会被调用几次 - 老孟Flutter - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    <link id="MainCss" rel="stylesheet" href="/skins/book/bundle-book.min.css?v=5xmc-Qs2EM-9vOc1aCV4382lc8BYx4rY4kBH4_strHE" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/book/bundle-book-mobile.min.css?v=knKkc4mK64DhMyOGFAt_fp3wlqcr8kE7ZgudDKTL5q8" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/mengqd/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/mengqd/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/mengqd/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 141280;
+        var currentBlogApp = 'mengqd';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'BOOK';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 10:10';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    
+    
+    
+</head>
+<body class="has-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    <script type="text/javascript">
+	try {
+		if (screen.availWidth > 1200) {
+			document.getElementById("MainCss").href = '/skins/book/bundle-book-2.min.css';
+		}
+	} catch (e) { }
+</script>
+
+<div id="header">
+<div id="HeaderTitle">
+<div id="Title">
+<a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/mengqd/">meng5619</a>
+
+</div>
+<div id="subTitle">
+
+</div>
+</div>
+</div>
+
+
+<div id="main">
+	<div id="post_detail">
+    <div class="post">
+        <h2>
+            
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/mengqd/p/13875579.html">
+    <span>【Flutter 面试】main入口函数会被调用几次</span>
+    
+
+
+</a>
+
+        </h2>
+        
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+    <p><img src="https://img2020.cnblogs.com/other/467322/202010/467322-20201025220951801-640789195.png" alt="" loading="lazy"></p>
+<blockquote>
+<p><strong>老孟导读</strong>：这是一个读者面试时被问到的问题，这个问题前段时间我也在<strong>VIP交流群</strong>和大家一起探讨过。</p>
+<p>这个问题涉及<strong>引擎</strong>的相关知识，如果不了解相关知识，很难回答正确，因为不管说调用几次都是<strong>错误的</strong>，下面来看一下<strong>引擎</strong>的相关知识。</p>
+</blockquote>
+<p>创建一个 Flutter 项目，然后运行，<strong>main入口函数</strong> 只会执行一次，下面修改项目的 MainActivity ，</p>
+<pre><code class="language-kotlin">class MainActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        findViewById&lt;Button&gt;(R.id.button).setOnClickListener {
+            startActivity(Intent(this, FlutterActivity::class.java))
+        }
+    }
+}
+</code></pre>
+<p>将其修改为一个普通的 Activity（原来是 FlutterActivity），添加一个按钮，跳转到 FlutterActivity，加载 Flutter 页面。</p>
+<p>在 flutter 的 main 入口函数处添加日志：</p>
+<pre><code class="language-dart">void main() {
+  runApp(MyApp());
+  print('===main====');
+}
+</code></pre>
+<p>运行，点击跳转，跳转到了Flutter 页面，返回，再次点击跳转：</p>
+<p><img src="https://img2020.cnblogs.com/other/467322/202010/467322-20201025220952558-1436447911.gif" alt="" loading="lazy"></p>
+<p>日志如下：</p>
+<p><img src="https://img2020.cnblogs.com/other/467322/202010/467322-20201025220953482-18061602.png" alt="" loading="lazy"></p>
+<p>发现执行了<strong>2次main 入口函数</strong>。</p>
+<p>使用缓存引擎跳转：</p>
+<pre><code class="language-dart">val flutterEngine = FlutterEngine(this)
+flutterEngine.dartExecutor.executeDartEntrypoint(
+        DartExecutor.DartEntrypoint.createDefault()
+)
+FlutterEngineCache
+        .getInstance()
+        .put("engine_id", flutterEngine)
+
+findViewById&lt;Button&gt;(R.id.button).setOnClickListener {
+    startActivity(
+            FlutterActivity
+                    .withCachedEngine("engine_id")
+                    .build(this)
+    )
+}
+</code></pre>
+<p><img src="https://img2020.cnblogs.com/other/467322/202010/467322-20201025220955020-228455170.png" alt="" loading="lazy"></p>
+<p>运行，发现还没有点击跳转，就执行了<strong>1次main 入口函数</strong>，点击跳转，然后这次不在执行 main 入口函数。</p>
+<p>增加一个函数 main1:</p>
+<pre><code class="language-dart">void main() {
+  runApp(MyApp());
+  print('===main====');
+}
+
+void main1() {
+  runApp(MyApp());
+  print('===main1====');
+}
+</code></pre>
+<p>修改引擎 <strong>Entrypoint</strong> 为 <strong>main1</strong>：</p>
+<pre><code class="language-dart">class MainActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val flutterEngine = FlutterEngine(this)
+        flutterEngine.dartExecutor.executeDartEntrypoint(
+//            DartExecutor.DartEntrypoint.createDefault()
+                createEntrypoint()
+        )
+        FlutterEngineCache
+                .getInstance()
+                .put("engine_id", flutterEngine)
+
+        findViewById&lt;Button&gt;(R.id.button).setOnClickListener {
+            startActivity(
+                    FlutterActivity
+                            .withCachedEngine("engine_id")
+                            .build(this)
+            )
+        }
+    }
+
+    fun createEntrypoint(): DartExecutor.DartEntrypoint {
+        val flutterLoader: FlutterLoader = FlutterInjector.instance().flutterLoader()
+        return DartExecutor.DartEntrypoint(flutterLoader.findAppBundlePath(), "main1")
+    }
+}
+</code></pre>
+<p><img src="https://img2020.cnblogs.com/other/467322/202010/467322-20201025220955989-1386272541.png" alt="" loading="lazy"></p>
+<p>此时执行的是 <strong>main1 入口函数</strong>。</p>
+<h3 id="总结">总结</h3>
+<p>通过上面的实验，总结如下：</p>
+<ol>
+<li><strong>入口函数</strong> 执行的次数取决于 <strong>引擎的启动次数</strong>，每启动一次引擎，执行一次<strong>入口函数</strong> 。</li>
+<li>引擎的入口函数是可以指定的，默认是 <strong>main</strong>。</li>
+</ol>
+<p>因此面试过程中，不管回答几次都是错误的。</p>
+<h2 id="交流">交流</h2>
+<p>老孟Flutter博客（330个控件用法+实战入门系列文章）：<a href="http://laomengit.com">http://laomengit.com</a></p>
+<p>欢迎加入Flutter交流群（微信：laomengit）、关注公众号【老孟Flutter】：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="https://img2020.cnblogs.com/other/467322/202010/467322-20201025221002844-19244677.png" alt="" loading="lazy"></td>
+<td><img src="https://img2020.cnblogs.com/other/467322/202010/467322-20201025221006303-690341541.png" alt="" loading="lazy"></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+        <p class="postfoot">
+            posted on 
+<span id="post-date">2020-10-25 22:10</span>&nbsp;
+<a href="https://www.cnblogs.com/mengqd/">老孟Flutter</a>&nbsp;
+阅读(<span id="post_view_count">33</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13875579" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13875579);return false;">收藏</a>
+        </p>
+    </div>
+</div>
+
+
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 141280, cb_blogApp = 'mengqd', cb_blogUserGuid = 'c138f17a-a42c-e211-aa8f-842b2b196315';
+    var cb_entryId = 13875579, cb_entryCreatedDate = '2020-10-25 22:10', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+
+
+	<p id="footer">
+	Powered by: 
+	<br />
+	
+	<a href="https://www.cnblogs.com/" id="footer_site_link">博客园</a>
+	<br />
+	Copyright &copy; 2020 老孟Flutter
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+</p>
+
+
+</div>
+<div id="rightmenu">
+	
+		<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+		
+<h3>导航</h3>
+<ul>
+			<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+			<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/mengqd/">
+首页</a>
+</li>
+			<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+			<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/%E8%80%81%E5%AD%9FFlutter">
+联系</a></li>
+			<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/mengqd/rss/">
+订阅</a>
+<a id="blog_nav_rss_image" href="https://www.cnblogs.com/mengqd/rss/">
+    <img src="/skins/book/images/xml.gif" alt="订阅" />
+</a></li>
+			<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		
+<h3>统计</h3>
+<ul>
+    <li>随笔 - 
+98</li>
+    <li>文章 - 
+2</li>
+    <li>评论 - 
+61</li>
+    <li>
+        引用 - 
+0
+    </li>
+</ul>
+
+
+		<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+		<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+	
+</div>
+			
+			
+			
+			
+			 
+
+	
+
+
+    <div id="page_end_html">
+        
+
+    </div>
+</body>
+</html>

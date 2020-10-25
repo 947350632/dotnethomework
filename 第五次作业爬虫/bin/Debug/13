@@ -1,0 +1,795 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="description" content="一、简介 官网地址:http://seata.io/zh-cn/ 1，概念 Seata是一款开源的分布式事务解决方案，致力于在微服务架构在提供高性能和简单一样的分布式事务服务。 2，处理过程 Tran" />
+    <meta property="og:description" content="一、简介 官网地址:http://seata.io/zh-cn/ 1，概念 Seata是一款开源的分布式事务解决方案，致力于在微服务架构在提供高性能和简单一样的分布式事务服务。 2，处理过程 Tran" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Spring Cloud Alibaba Seata - MXC肖某某 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    <link id="MainCss" rel="stylesheet" href="/skins/coffee/bundle-coffee.min.css?v=F9ODK0b_BexrGFuzwObB8A2Gx3VnPgTALBeh3BNdKdg" />
+    <link type="text/css" rel="stylesheet" href="https://www.cnblogs.com/bbgs-xc/custom.css?v=b&#x2B;U8xXNefd0Tn/LN8m6LpxpNcuo=" />
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/coffee/bundle-coffee-mobile.min.css?v=_A34W8fnMJT0tcRq18x5CRz6GYA4gZvedLXGAkdf2Ms" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/bbgs-xc/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/bbgs-xc/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/bbgs-xc/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 433655;
+        var currentBlogApp = 'bbgs-xc';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'coffee';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 10:10';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    
+    
+    
+</head>
+<body class="no-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="page_begin_html">
+        <link  type="text/css" rel="stylesheet" href="https://files.cnblogs.com/files/miangao/maodian.css">
+<script src="https://files.cnblogs.com/files/miangao/bootstrap.min.js" defer></script>
+
+    </div>
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a href="https://www.cnblogs.com/bbgs-xc/"><img id="blogLogo" src="/skins/custom/images/logo.gif" alt="返回主页" /></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/bbgs-xc/">MXC</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="navigator">
+			
+<ul id="navList">
+	<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+	<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/bbgs-xc/">
+首页</a>
+</li>
+	<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+	<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/MXC%E8%82%96%E6%9F%90%E6%9F%90">
+联系</a></li>
+	<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+	<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/bbgs-xc/rss/">
+订阅</a>
+	
+<a id="blog_nav_rss_image" href="https://www.cnblogs.com/bbgs-xc/rss/">
+    <img src="/skins/coffee/images/xml.gif" alt="订阅" />
+</a></li>
+</ul>
+
+
+
+			<div class="blogStats">
+				
+				<!--done-->
+随笔- 
+76&nbsp;
+文章- 
+0&nbsp;
+评论- 
+6&nbsp;
+
+
+
+				
+			</div><!--end: blogStats -->
+		</div><!--end: navigator 博客导航栏 -->
+		<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class = "postTitle">
+			
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/bbgs-xc/p/13862491.html">
+    <span>Spring Cloud Alibaba Seata</span>
+    
+
+
+</a>
+
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			
+<div id="cnblogs_post_body" class="blogpost-body">
+    <h2><span style="font-family: 宋体">一、简介</span></h2>
+<p><span style="font-family: 宋体">官网地址:<a href="http://seata.io/zh-cn/" target="_blank">http://seata.io/zh-cn/</a></span></p>
+<h3><span style="font-family: 宋体">1，概念</span></h3>
+<p><span style="font-family: 宋体">　　Seata是一款开源的分布式事务解决方案，致力于在微服务架构在提供高性能和简单一样的分布式事务服务。</span></p>
+<h3><span style="font-family: 宋体">2，处理过程</span></h3>
+<p><span style="font-family: 宋体">　　Transaction ID XID:全局唯一的事务ID</span></p>
+<p><span style="font-family: 宋体">　　Transaction Coordinator(TC) :维护全局和分支事务的状态，驱动全局事务提交或回滚。</span></p>
+<p><span style="font-family: 宋体">　　Transaction&nbsp; Manager(TM) :定义全局事务的范围：开始全局事务、提交或回滚全局事务。</span></p>
+<p><span style="font-family: 宋体">　　Resource Manager(RM) :管理分支事务处理的资源，与TC交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚。</span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="https://img2020.cnblogs.com/blog/1405595/202010/1405595-20201023093054469-1524716360.png" width="678" height="356" loading="lazy"></p>
+<ol>
+<li><span style="font-family: 宋体">TM向TC申请开启一个全局事务，全局事务创建成功并生成一个全局唯一的XID</span></li>
+<li><span style="font-family: 宋体">XID在微服务调用链路的上下文中传播</span></li>
+<li><span style="font-family: 宋体">RM向TC注册分支事务，将其纳入XID对应全局事务的管辖</span></li>
+<li><span style="font-family: 宋体">TM向TC发起针对XID的全局提交或回滚决议</span></li>
+<li><span style="font-family: 宋体">TC调度XID下管辖的全部分支事务完成提交或回滚请求</span></li>
+</ol>
+<h2><span style="font-family: 宋体">二、Seata-Server的安装</span></h2>
+<h3><span style="font-family: 宋体">1，下载</span></h3>
+<p><span style="font-family: 宋体">　　<a href="http://seata.io/zh-cn/blog/download.html" target="_blank">http://seata.io/zh-cn/blog/download.html</a>&nbsp;选择指定版本下载(我这里用的是0.9.0)</span></p>
+<h3><span style="font-family: 宋体">2，修改配置文件</span></h3>
+<p><span style="font-family: 宋体">　　修改seata/conf/file.conf</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">#将service中修改group
+vgroup_mapping.my_test_tx_group </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">my_group</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+#将store模块修改为db并修改数据连接，将conf目录下的db_store.sql文件导入到数据库中
+mode </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">db</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+db {</span><span style="color: rgba(0, 0, 0, 1)">
+    datasource </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">dbcp</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    db</span>-type = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">mysql</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    driver</span>-<span style="color: rgba(0, 0, 255, 1)">class</span>-name = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">com.mysql.jdbc.Driver</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    url </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">jdbc:mysql://127.0.0.1:3306/seata</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    user </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">root</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    password </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">123456</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+}</span></pre>
+</div>
+<p><span style="font-family: 宋体">&nbsp;　　修改seata/conf/registry.conf</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">registry {
+  type </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">nacos</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  nacos {
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">localhost:8848</span><span style="color: rgba(128, 0, 0, 1)">"</span>
+    <span style="color: rgba(0, 0, 255, 1)">namespace</span> = <span style="color: rgba(128, 0, 0, 1)">""</span><span style="color: rgba(0, 0, 0, 1)">
+    cluster </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+ }</span></pre>
+</div>
+<h2><span style="font-family: 宋体">三、Seata的应用</span></h2>
+<h3><span style="font-family: 宋体">1，订单服务</span></h3>
+<p><span style="font-family: 宋体">源码:<a href="https://gitee.com/xiaocheng0902/my-cloud/tree/master/cloud-alibaba-seata/seata-order-service2001" target="_blank">seata-order-service2001</a></span></p>
+<h4><span style="font-family: 宋体">a，配置pom</span></h4>
+<div class="cnblogs_code"><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" id="code_img_closed_3e3bbf49-0336-44ec-9f75-1158c4a247fe" class="code_img_closed"><img src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" id="code_img_opened_3e3bbf49-0336-44ec-9f75-1158c4a247fe" class="code_img_opened" style="display: none">
+<div id="cnblogs_code_open_3e3bbf49-0336-44ec-9f75-1158c4a247fe" class="cnblogs_code_hide">
+<pre>&lt;!--nacos--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;!--seata--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-seata&lt;/artifactId&gt;
+    &lt;exclusions&gt;
+        &lt;exclusion&gt;
+            &lt;artifactId&gt;seata-all&lt;/artifactId&gt;
+            &lt;groupId&gt;io.seata&lt;/groupId&gt;
+        &lt;/exclusion&gt;
+    &lt;/exclusions&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.seata&lt;/groupId&gt;
+    &lt;artifactId&gt;seata-all&lt;/artifactId&gt;
+    &lt;version&gt;<span style="color: rgba(128, 0, 128, 1)">0.9</span>.<span style="color: rgba(128, 0, 128, 1)">0</span>&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;!--feign--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;!--web-actuator--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;!--mysql-druid--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;<span style="color: rgba(128, 0, 128, 1)">5.1</span>.<span style="color: rgba(128, 0, 128, 1)">37</span>&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+    &lt;artifactId&gt;druid-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;<span style="color: rgba(128, 0, 128, 1)">1.1</span>.<span style="color: rgba(128, 0, 128, 1)">10</span>&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;<span style="color: rgba(128, 0, 128, 1)">2.0</span>.<span style="color: rgba(128, 0, 128, 1)">0</span>&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h4><span style="font-family: 宋体">b，配置yaml</span></h4>
+<div class="cnblogs_code"><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" id="code_img_closed_d18089dc-bc79-4766-8f0f-d1fe168dd506" class="code_img_closed"><img src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" id="code_img_opened_d18089dc-bc79-4766-8f0f-d1fe168dd506" class="code_img_opened" style="display: none">
+<div id="cnblogs_code_open_d18089dc-bc79-4766-8f0f-d1fe168dd506" class="cnblogs_code_hide">
+<pre><span style="color: rgba(0, 0, 0, 1)">server:
+  port: </span><span style="color: rgba(128, 0, 128, 1)">2001</span><span style="color: rgba(0, 0, 0, 1)">
+
+spring:
+  application:
+    name: seata</span>-order-<span style="color: rgba(0, 0, 0, 1)">service
+  cloud:
+    alibaba:
+      seata:
+        #自定义事务组名称需要与seata</span>-<span style="color: rgba(0, 0, 0, 1)">server中的对应
+        tx</span>-service-<span style="color: rgba(0, 0, 0, 1)">group: my_group
+    nacos:
+      discovery:
+        server</span>-addr: localhost:<span style="color: rgba(128, 0, 128, 1)">8848</span><span style="color: rgba(0, 0, 0, 1)">
+  datasource:
+    driver</span>-<span style="color: rgba(0, 0, 255, 1)">class</span>-<span style="color: rgba(0, 0, 0, 1)">name: com.mysql.jdbc.Driver
+    url: jdbc:mysql:</span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)">localhost:3306/seata_order</span>
+<span style="color: rgba(0, 0, 0, 1)">    username: root
+    password: </span><span style="color: rgba(128, 0, 128, 1)">123456</span><span style="color: rgba(0, 0, 0, 1)">
+
+feign:
+  hystrix:
+    enabled: </span><span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">
+
+logging:
+  level:
+    io:
+      seata: info
+
+mybatis:
+  mapperLocations: classpath:mapper</span><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)">.xml</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h4><span style="font-family: 宋体">c，添加file.conf(与seata-server配置相同)</span></h4>
+<div class="cnblogs_code"><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" id="code_img_closed_713ed13b-ebd5-4a1e-b599-ccc84178e0ab" class="code_img_closed"><img src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" id="code_img_opened_713ed13b-ebd5-4a1e-b599-ccc84178e0ab" class="code_img_opened" style="display: none">
+<div id="cnblogs_code_open_713ed13b-ebd5-4a1e-b599-ccc84178e0ab" class="cnblogs_code_hide">
+<pre><span style="color: rgba(0, 0, 0, 1)">transport {
+  # tcp udt unix</span>-domain-<span style="color: rgba(0, 0, 0, 1)">socket
+  type </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">TCP</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  #NIO NATIVE
+  server </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">NIO</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  #enable heartbeat
+  heartbeat </span>= <span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">
+  #thread factory </span><span style="color: rgba(0, 0, 255, 1)">for</span><span style="color: rgba(0, 0, 0, 1)"> netty
+  thread</span>-<span style="color: rgba(0, 0, 0, 1)">factory {
+    boss</span>-thread-prefix = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">NettyBoss</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    worker</span>-thread-prefix = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">NettyServerNIOWorker</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    server</span>-executor-thread-prefix = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">NettyServerBizHandler</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    share</span>-boss-worker = <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">
+    client</span>-selector-thread-prefix = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">NettyClientSelector</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    client</span>-selector-thread-size = <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">
+    client</span>-worker-thread-prefix = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">NettyClientWorkerThread</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    # netty boss thread size,will not be used </span><span style="color: rgba(0, 0, 255, 1)">for</span><span style="color: rgba(0, 0, 0, 1)"> UDT
+    boss</span>-thread-size = <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">
+    #auto </span><span style="color: rgba(0, 0, 255, 1)">default</span> pin or <span style="color: rgba(128, 0, 128, 1)">8</span><span style="color: rgba(0, 0, 0, 1)">
+    worker</span>-thread-size = <span style="color: rgba(128, 0, 128, 1)">8</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  shutdown {
+    # when destroy server, wait seconds
+    wait </span>= <span style="color: rgba(128, 0, 128, 1)">3</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  serialization </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">seata</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  compressor </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">none</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+}
+
+service {
+
+  vgroup_mapping.my_group </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span>
+
+  <span style="color: rgba(0, 0, 255, 1)">default</span>.grouplist = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">127.0.0.1:8091</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  enableDegrade </span>= <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">
+  disable </span>= <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">
+  max.commit.retry.timeout </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-1</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  max.rollback.retry.timeout </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-1</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  disableGlobalTransaction </span>= <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">
+}
+
+
+client {
+  </span><span style="color: rgba(0, 0, 255, 1)">async</span>.commit.buffer.limit = <span style="color: rgba(128, 0, 128, 1)">10000</span>
+  <span style="color: rgba(0, 0, 255, 1)">lock</span><span style="color: rgba(0, 0, 0, 1)"> {
+    retry.</span><span style="color: rgba(0, 0, 255, 1)">internal</span> = <span style="color: rgba(128, 0, 128, 1)">10</span><span style="color: rgba(0, 0, 0, 1)">
+    retry.times </span>= <span style="color: rgba(128, 0, 128, 1)">30</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  report.retry.count </span>= <span style="color: rgba(128, 0, 128, 1)">5</span><span style="color: rgba(0, 0, 0, 1)">
+  tm.commit.retry.count </span>= <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">
+  tm.rollback.retry.count </span>= <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">
+}
+
+## transaction log store
+store {
+  ## store mode: file、db
+  mode </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">db</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+
+  ## file store
+  file {
+    dir </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">sessionStore</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+
+    # branch session size , </span><span style="color: rgba(0, 0, 255, 1)">if</span> exceeded first <span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)"> compress lockkey, still exceeded throws exceptions
+    max</span>-branch-session-size = <span style="color: rgba(128, 0, 128, 1)">16384</span><span style="color: rgba(0, 0, 0, 1)">
+    # globe session size , </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> exceeded throws exceptions
+    max</span>-<span style="color: rgba(0, 0, 255, 1)">global</span>-session-size = <span style="color: rgba(128, 0, 128, 1)">512</span><span style="color: rgba(0, 0, 0, 1)">
+    # file buffer size , </span><span style="color: rgba(0, 0, 255, 1)">if</span> exceeded allocate <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> buffer
+    file</span>-write-buffer-cache-size = <span style="color: rgba(128, 0, 128, 1)">16384</span><span style="color: rgba(0, 0, 0, 1)">
+    # when recover batch read size
+    session.reload.read_size </span>= <span style="color: rgba(128, 0, 128, 1)">100</span><span style="color: rgba(0, 0, 0, 1)">
+    # </span><span style="color: rgba(0, 0, 255, 1)">async</span><span style="color: rgba(0, 0, 0, 1)">, sync
+    flush</span>-disk-mode = <span style="color: rgba(0, 0, 255, 1)">async</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+
+  ## database store
+  db {
+    ## the implement of javax.sql.DataSource, such </span><span style="color: rgba(0, 0, 255, 1)">as</span> DruidDataSource(druid)/<span style="color: rgba(0, 0, 0, 1)">BasicDataSource(dbcp) etc.
+    datasource </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">dbcp</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    ## mysql</span>/oracle/h2/<span style="color: rgba(0, 0, 0, 1)">oceanbase etc.
+    db</span>-type = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">mysql</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    driver</span>-<span style="color: rgba(0, 0, 255, 1)">class</span>-name = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">com.mysql.jdbc.Driver</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    url </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">jdbc:mysql://127.0.0.1:3306/seata</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    user </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">root</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    password </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">123456</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    min</span>-conn = <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">
+    max</span>-conn = <span style="color: rgba(128, 0, 128, 1)">3</span>
+    <span style="color: rgba(0, 0, 255, 1)">global</span>.table = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">global_table</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    branch.table </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">branch_table</span><span style="color: rgba(128, 0, 0, 1)">"</span>
+    <span style="color: rgba(0, 0, 255, 1)">lock</span>-table = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">lock_table</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    query</span>-limit = <span style="color: rgba(128, 0, 128, 1)">100</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+}
+</span><span style="color: rgba(0, 0, 255, 1)">lock</span><span style="color: rgba(0, 0, 0, 1)"> {
+  ## the </span><span style="color: rgba(0, 0, 255, 1)">lock</span><span style="color: rgba(0, 0, 0, 1)"> store mode: local、remote
+  mode </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">remote</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+
+  local {
+    ## store locks </span><span style="color: rgba(0, 0, 255, 1)">in</span> user<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">s database</span>
+<span style="color: rgba(0, 0, 0, 1)">  }
+
+  remote {
+    ## store locks </span><span style="color: rgba(0, 0, 255, 1)">in</span> the seata<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">s server</span>
+<span style="color: rgba(0, 0, 0, 1)">  }
+}
+recovery {
+  #schedule committing retry period </span><span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> milliseconds
+  committing</span>-retry-period = <span style="color: rgba(128, 0, 128, 1)">1000</span><span style="color: rgba(0, 0, 0, 1)">
+  #schedule asyn committing retry period </span><span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> milliseconds
+  asyn</span>-committing-retry-period = <span style="color: rgba(128, 0, 128, 1)">1000</span><span style="color: rgba(0, 0, 0, 1)">
+  #schedule rollbacking retry period </span><span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> milliseconds
+  rollbacking</span>-retry-period = <span style="color: rgba(128, 0, 128, 1)">1000</span><span style="color: rgba(0, 0, 0, 1)">
+  #schedule timeout retry period </span><span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> milliseconds
+  timeout</span>-retry-period = <span style="color: rgba(128, 0, 128, 1)">1000</span><span style="color: rgba(0, 0, 0, 1)">
+}
+
+transaction {
+  undo.data.validation </span>= <span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">
+  undo.log.serialization </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">jackson</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  undo.log.save.days </span>= <span style="color: rgba(128, 0, 128, 1)">7</span><span style="color: rgba(0, 0, 0, 1)">
+  #schedule delete expired undo_log </span><span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> milliseconds
+  undo.log.delete.period </span>= <span style="color: rgba(128, 0, 128, 1)">86400000</span><span style="color: rgba(0, 0, 0, 1)">
+  undo.log.table </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">undo_log</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+}
+
+## metrics settings
+metrics {
+  enabled </span>= <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">
+  registry</span>-type = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">compact</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  # multi exporters use comma divided
+  exporter</span>-list = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">prometheus</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  exporter</span>-prometheus-port = <span style="color: rgba(128, 0, 128, 1)">9898</span><span style="color: rgba(0, 0, 0, 1)">
+}
+
+support {
+  ## spring
+  spring {
+    # auto proxy the DataSource bean
+    datasource.autoproxy </span>= <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+}</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h4><span style="font-family: 宋体">d，添加registry.conf(与seata-server的配置相同)</span></h4>
+<div class="cnblogs_code"><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" id="code_img_closed_76dd9700-4682-4f79-b894-8bbd14db0001" class="code_img_closed"><img src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" id="code_img_opened_76dd9700-4682-4f79-b894-8bbd14db0001" class="code_img_opened" style="display: none">
+<div id="cnblogs_code_open_76dd9700-4682-4f79-b894-8bbd14db0001" class="cnblogs_code_hide">
+<pre><span style="color: rgba(0, 0, 0, 1)">registry {
+  # file 、nacos 、eureka、redis、zk、consul、etcd3、sofa
+  type </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">nacos</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+
+  nacos {
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">localhost:8848</span><span style="color: rgba(128, 0, 0, 1)">"</span>
+    <span style="color: rgba(0, 0, 255, 1)">namespace</span> = <span style="color: rgba(128, 0, 0, 1)">""</span><span style="color: rgba(0, 0, 0, 1)">
+    cluster </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  eureka {
+    serviceUrl </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">http://localhost:8761/eureka</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    application </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    weight </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">1</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  redis {
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">localhost:6379</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    db </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">0</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  zk {
+    cluster </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">127.0.0.1:2181</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    session.timeout </span>= <span style="color: rgba(128, 0, 128, 1)">6000</span><span style="color: rgba(0, 0, 0, 1)">
+    connect.timeout </span>= <span style="color: rgba(128, 0, 128, 1)">2000</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  consul {
+    cluster </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">127.0.0.1:8500</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  etcd3 {
+    cluster </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">http://localhost:2379</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  sofa {
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">127.0.0.1:9603</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    application </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    region </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">DEFAULT_ZONE</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    datacenter </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">DefaultDataCenter</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    cluster </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">default</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    group </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">SEATA_GROUP</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    addressWaitTime </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">3000</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  file {
+    name </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">file.conf</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+}
+
+config {
+  # file、nacos 、apollo、zk、consul、etcd3
+  type </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">file</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+
+  nacos {
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">localhost</span><span style="color: rgba(128, 0, 0, 1)">"</span>
+    <span style="color: rgba(0, 0, 255, 1)">namespace</span> = <span style="color: rgba(128, 0, 0, 1)">""</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  consul {
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">127.0.0.1:8500</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  apollo {
+    app.id </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">seata-server</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    apollo.meta </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">http://192.168.1.204:8801</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  zk {
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">127.0.0.1:2181</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    session.timeout </span>= <span style="color: rgba(128, 0, 128, 1)">6000</span><span style="color: rgba(0, 0, 0, 1)">
+    connect.timeout </span>= <span style="color: rgba(128, 0, 128, 1)">2000</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  etcd3 {
+    serverAddr </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">http://localhost:2379</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+  file {
+    name </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">file.conf</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+}</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h4><span style="font-family: 宋体">e，fegin调用(这里以其中一个account为例)</span></h4>
+<div class="cnblogs_code"><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" id="code_img_closed_cd2d60da-7b52-4fb5-a328-476968990135" class="code_img_closed"><img src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" id="code_img_opened_cd2d60da-7b52-4fb5-a328-476968990135" class="code_img_opened" style="display: none">
+<div id="cnblogs_code_open_cd2d60da-7b52-4fb5-a328-476968990135" class="cnblogs_code_hide">
+<pre>@FeignClient(value = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">seata-account-service</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">interface</span><span style="color: rgba(0, 0, 0, 1)"> AccountService {
+
+    @RequestMapping(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">/account/decrease</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> CommonResult decrease(@RequestParam(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">userId</span><span style="color: rgba(128, 0, 0, 1)">"</span>) Long userId, @RequestParam(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">money</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">) BigDecimal money);
+
+}</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h4><span style="font-family: 宋体">f，事务service</span></h4>
+<div class="cnblogs_code"><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" id="code_img_closed_4fad7922-27d9-48fd-8794-3207ab6adec9" class="code_img_closed"><img src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" id="code_img_opened_4fad7922-27d9-48fd-8794-3207ab6adec9" class="code_img_opened" style="display: none">
+<div id="cnblogs_code_open_4fad7922-27d9-48fd-8794-3207ab6adec9" class="cnblogs_code_hide">
+<pre><span style="color: rgba(0, 0, 0, 1)">@Slf4j
+@Service
+</span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> OrderServiceImpl implements OrderService {
+
+    @Autowired
+    OrderDao orderDao;
+    @Autowired
+    AccountService accountService;
+    @Autowired
+    StorageService storageService;
+
+    @Override
+    @GlobalTransactional(name </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">my-order-test</span><span style="color: rgba(128, 0, 0, 1)">"</span>,rollbackFor = Exception.<span style="color: rgba(0, 0, 255, 1)">class</span>) <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)">加注解使用全局的事务，name 为事务名称不重复就行</span>
+    <span style="color: rgba(0, 0, 255, 1)">public</span><span style="color: rgba(0, 0, 0, 1)"> Long create(Order order) {
+        log.info(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">=========================下订单，开始</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+        orderDao.create(order);
+        log.info(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">=========================下订单，完成</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+
+        log.info(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">=========================减库存，开始</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+        storageService.decrease(order.getProductId(), order.getCount());
+        log.info(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">=========================减库存，完成</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+
+        log.info(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">=========================减积分，开始</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+        accountService.decrease(order.getUserId(), order.getMoney());
+        log.info(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">=========================减积分，完成</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+
+        log.info(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">=========================订单状态修改，开始</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+        orderDao.update(order.getId(),</span><span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
+        log.info(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">=========================订单状态修改，完成</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+
+        </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> order.getId();
+    }
+}</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h4><span style="font-family: 宋体">g，启动类</span></h4>
+<div class="cnblogs_code"><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" id="code_img_closed_148c413d-1898-43e6-b808-abfff0f7589a" class="code_img_closed"><span class="cnblogs_code_collapse">View Code</span></div>
+<h3><span style="font-family: 宋体">2，库存服务</span></h3>
+<p><span style="font-family: 宋体">源码：<a href="https://gitee.com/xiaocheng0902/my-cloud/tree/master/cloud-alibaba-seata/seata-storage-service2002" target="_blank">seata-storage-service2002</a></span></p>
+<p><span style="font-family: 宋体">　　与订单服务中的a，b，c，d，g配置步骤相同</span></p>
+<h3><span style="font-family: 宋体">3，账户服务</span></h3>
+<p><span style="font-family: 宋体">源码:<a href="https://gitee.com/xiaocheng0902/my-cloud/tree/master/cloud-alibaba-seata/seata-account-service2003" target="_blank">seata-account-service2003</a></span></p>
+<p><span style="font-family: 宋体">　　与库存服务的配置步骤相同</span></p>
+<h2><span style="font-family: 宋体">四、Seata的原理解析</span></h2>
+<p><span style="font-family: 宋体">参考文档：<a href="http://seata.io/zh-cn/docs/overview/what-is-seata.html" target="_blank">http://seata.io/zh-cn/docs/overview/what-is-seata.html</a></span></p>
+<h3><span style="font-family: 宋体">1，AT模式</span></h3>
+<h4><span style="font-family: 宋体">一阶段</span></h4>
+<blockquote>
+<p>&nbsp;</p>
+<pre>1，解析SQL语义，找到"业务SQL"要更新的业务数据，在业务数据被更新前，将其保存成"before image"
+2，执行"业务SQL"<span>更新业务数据，在业务数更新之后
+3，将其保存成"after image"<span>，最后生成行锁。
+以上操作全部在一个数据库事务内完成，这样保证了一阶段操作的原子性。</span></span></pre>
+<p>&nbsp;</p>
+</blockquote>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="https://img2020.cnblogs.com/blog/1405595/202010/1405595-20201025223309722-141241033.png" width="543" height="300" loading="lazy"></p>
+<h4><span style="font-family: 宋体">二阶段提交</span></h4>
+<blockquote>
+<p><span style="font-family: 宋体">因为"业务SQL"在一阶段已经提交至数据库，所以seata框架只需<strong>将一阶段保存的快照数据和行锁删掉</strong>，完成数据清理即可。</span></p>
+</blockquote>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="https://img2020.cnblogs.com/blog/1405595/202010/1405595-20201025223649431-650616256.png" width="706" height="300" loading="lazy"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><span style="font-family: 宋体">二阶段回滚</span></h4>
+<blockquote>
+<p><span style="font-family: 宋体">二阶段如果是回滚的话，seata就需要回滚一阶段已经执行的"业务SQL"，还原业务数据。</span></p>
+<p><span style="font-family: 宋体">回滚的方式便是用"before image"还原业务数据；但在还原前要首先校验脏写，对比"数据库当前业务数据"和"after image"</span></p>
+<p><span style="font-family: 宋体">如果两份数据完全一致就说明没有脏写，可以还原业务数据，如果不一致就说明有脏写，出现脏写就需要转人工处理。</span></p>
+</blockquote>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="https://img2020.cnblogs.com/blog/1405595/202010/1405595-20201025224055618-1224765685.png" width="667" height="300" loading="lazy"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>　　</p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+		</div>
+		<div class="postDesc">posted @ 
+<span id="post-date">2020-10-25 22:10</span>&nbsp;
+<a href="https://www.cnblogs.com/bbgs-xc/">MXC肖某某</a>&nbsp;
+阅读(<span id="post_view_count">17</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13862491" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13862491);return false;">收藏</a></div>
+	</div>
+	
+	
+</div><!--end: topics 文章、评论容器-->
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 433655, cb_blogApp = 'bbgs-xc', cb_blogUserGuid = '142b21a2-5a20-4604-3ff5-08d5bd671cf8';
+    var cb_entryId = 13862491, cb_entryCreatedDate = '2020-10-25 22:10', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+			<div id="calendar"><div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script></div>
+			
+			<DIV id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</DIV>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 MXC肖某某
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    <div id="page_end_html">
+        <script language="javascript" type="text/javascript">
+
+// 生成目录索引列表
+// ref: http://www.cnblogs.com/wangqiguo/p/4355032.html
+// modified by: zzq
+function GenerateContentList()
+{
+    var mainContent = $('#cnblogs_post_body');
+    var h2_list = $('#cnblogs_post_body h2');//如果你的章节标题不是h2,只需要将这里的h2换掉即可
+
+    if(mainContent.length < 1)
+        return;
+
+    if(h2_list.length>0)
+    {
+        var content = '<a name="_labelTop"></a>';
+        content += '<div id="navCategory">';
+        content += '<p style="font-size:18px"><b>目录</b></p>';
+        content += '<ul>';
+        for(var i=0; i<h2_list.length; i++)
+        {
+            var go_to_top = '<div style="text-align: right"><a href="#_labelTop">回到顶部</a><a name="_label' + i + '"></a></div>';
+            $(h2_list[i]).before(go_to_top);
+
+            var h3_list = $(h2_list[i]).nextAll("h3");
+            var li3_content = '';
+            for(var j=0; j<h3_list.length; j++)
+            {
+                var tmp = $(h3_list[j]).prevAll('h2').first();
+                if(!tmp.is(h2_list[i]))
+                    break;
+                var li3_anchor = '<a name="_label' + i + '_' + j + '"></a>';
+                $(h3_list[j]).before(li3_anchor);
+                li3_content += '<li><a href="#_label' + i + '_' + j + '">' + $(h3_list[j]).text() + '</a></li>';
+            }
+
+            var li2_content = '';
+            if(li3_content.length > 0)
+                li2_content = '<li><a href="#_label' + i + '">' + $(h2_list[i]).text() + '</a><ul>' + li3_content + '</ul></li>';
+            else
+                li2_content = '<li><a href="#_label' + i + '">' + $(h2_list[i]).text() + '</a></li>';
+            content += li2_content;
+        }
+        content += '</ul>';
+        content += '</div><p> </p>';
+        content += '<p style="font-size:18px"><b>正文</b></p>';
+        if($('#cnblogs_post_body').length != 0 )
+        {
+            $($('#cnblogs_post_body')[0]).prepend(content);
+        }
+    }
+
+}
+
+GenerateContentList();
+</script>
+    </div>
+</body>
+</html>

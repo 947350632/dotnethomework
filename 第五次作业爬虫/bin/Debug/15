@@ -1,0 +1,351 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="description" content="记录这半个多月来的入门成果，但平时课业繁重，基本只有周末稍微玩下" />
+    <meta property="og:description" content="记录这半个多月来的入门成果，但平时课业繁重，基本只有周末稍微玩下" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>STC 核心板 入门记 - 你好我叫郑某人 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    
+    <link type="text/css" rel="stylesheet" href="https://www.cnblogs.com/ZhengBlogs/custom.css?v=FKkFueHhBOlxskzY1mQIFGTaIsg=" />
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/custom/bundle-custom-mobile.min.css?v=KtAK50iXMDcU4jOl_mm1P0j3gXUtdRHDhFdu7YlsVVg" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/ZhengBlogs/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/ZhengBlogs/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/ZhengBlogs/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 633589;
+        var currentBlogApp = 'ZhengBlogs';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'Custom';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 10:59';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    
+    
+    
+</head>
+<body class="no-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="page_begin_html">
+            <div class="esa-loader">
+        <div class="box">
+            <div class="figure"></div>
+            <p class="label">Loading...</p>
+        </div>
+    </div>
+    </div>
+    <!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/ZhengBlogs/"><img id="blogLogo" src="/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/ZhengBlogs/">ZhengBlogs</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/ZhengBlogs/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/%E4%BD%A0%E5%A5%BD%E6%88%91%E5%8F%AB%E9%83%91%E6%9F%90%E4%BA%BA">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/ZhengBlogs/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 
+17&nbsp; </span>
+<span id="stats_article_count">文章 - 
+1&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+10</span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ZhengBlogs/p/STC_learning1.html">
+    <span>STC 核心板 入门记</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+    <div id="cnblogs_post_description" style="display: none">
+        记录这半个多月来的入门成果，但平时课业繁重，基本只有周末稍微玩下
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+    <h1 id="写在开始">写在开始</h1>
+<blockquote>
+<p>STC核心板，它的软件十分全面，想要什么都有，非常适合新手入门。<br>
+上一次电赛刚结束，现在反正也啥也不太会，干脆学个这个吧。<br>
+顺便写篇博客记录一下。</p>
+</blockquote>
+<h1 id="记录第一次烧写">记录第一次烧写</h1>
+<ul>
+<li>
+<p>周四下单，周六到货。中午拿板，下午开动。淘宝链接：<a href="https://detail.tmall.com/item.htm?spm=a230r.1.14.13.489f745fnMzbVj&amp;id=588624674995&amp;cm_id=140105335569ed55e27b&amp;abbucket=5"><strong>Risym</strong></a>，买过几回，质量可以。</p>
+</li>
+<li>
+<p>这个开发核心板是没有<strong>USB串口</strong>的，emmm，又困扰了我一会儿，想着重新买的话，又要好几天才能到，所以打算用<strong>esp8266 NodeMcu</strong>直通串口转接，理论上可行。（对应的接口用杜邦线连起来就行了）<br>
+<img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201017212419264-172918215.jpg" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>然后开始烧录程序，事实证明我的想法可行。👍（记得选对参数，驱动、烧录程序、例程我会放在文末）</p>
+</li>
+<li>
+<p>要是一直停留在<strong>正在检测单片机</strong>，尝试一下<strong>软重启</strong>（拔掉vcc线再插回去）<br>
+<img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201017212522424-411522504.png" alt="" loading="lazy"></p>
+</li>
+</ul>
+<blockquote>
+<p>关于<strong>keil5</strong>无法使用<strong>C51</strong>，但我的课程必须使用<strong>Keil5</strong>🤐（又折腾了我一下午）<br>
+keil5出现编辑<strong>STC项目</strong>时，魔法棒、导出等工具变灰，但编辑<strong>STM32项目</strong>时可行，就知道应该不是破解的问题。😥<br>
+参考这篇博客：<a href="https://blog.csdn.net/iefenghao/article/details/81809698">keil 5兼容keil 4（C51）解决方案</a><br>
+解决的很好。<br>
+真的是爬摸滚打。</p>
+</blockquote>
+<h2 id="1-串口通信测试（核心板例程串口通信收发测试）">1. 串口通信测试（核心板例程\串口通信收发测试）</h2>
+<blockquote>
+<p><strong>一般玩单片机刚开始都要去研究串口，而串口一开始最头痛的无非就是波特率和中断</strong><br>
+串行接口是一种可以将接收来自CPU的并行数据字符转换为连续的串行数据流发送出去，同时可将接收的串行数据流转换为并行的数据字符供给CPU的器件。<br>
+一般完成这种功能的电路，我们称为串行接口电路。<br>
+串口通信（Serial Communications）的概念非常简单，串口按位（bit）发送和接收字节的通信方式。</p>
+</blockquote>
+<p><strong>在keil中写注释时发现中文乱码，则进入</strong>configuration<strong>-</strong>Chinese GB2312<strong>，重新写中文注释即可。</strong></p>
+<ul>
+<li>偷懒一下，用例程吧，看看懂就行了😁<br>
+<img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201021224149662-1393479010.jpg" alt="" loading="lazy"></li>
+<li><strong>跑成的样子：</strong><br>
+<img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201021224319502-707672108.jpg" alt="" loading="lazy"></li>
+</ul>
+<h2 id="2-指示灯程序（核心板例程p10指示灯测试程序）">2. 指示灯程序（核心板例程\P10指示灯测试程序）</h2>
+<p><img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201021224639816-141580080.jpg" alt="" loading="lazy"></p>
+<ul>
+<li>烧录进去，指示灯不断闪烁，成功。（同时也是内置程序，用于测试板子的好坏）</li>
+</ul>
+<h2 id="3-采集模拟量数值发送到串口（核心板例程采集ad-p14端口模拟量数值发送到串口）">3. 采集模拟量数值发送到串口（核心板例程\采集AD-P14端口模拟量数值发送到串口）</h2>
+<ul>
+<li>
+<p>采集ADC口的数据发送到串口显示<br>
+<img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201021231002571-1012812472.jpg" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>下图中，上面的是没模拟输入情况，下面那个放了根铁丝去碰<strong>P14</strong>😂<br>
+<img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201021231142620-434206378.jpg" alt="" loading="lazy"></p>
+</li>
+</ul>
+<h2 id="4-中断0按键测试核心板例程中断0按键测试">4. 中断0按键测试(核心板例程\中断0按键测试)</h2>
+<p><img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201022165000480-466763646.jpg" alt="" loading="lazy"></p>
+<ul>
+<li>看了原理图和程序，先让<strong>SW</strong>闭合，再让<strong>S1</strong>（0按键）闭合，灯就能亮。<br>
+<img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201022165111130-643100713.jpg" alt="" loading="lazy"><br>
+忽略这个手🤔</li>
+</ul>
+<h2 id="5-io-跑马灯（stc15系列官方例程例程01-io-跑马灯）">5. IO-跑马灯（STC15系列官方例程\例程\01-IO-跑马灯）</h2>
+<p><img src="https://img2020.cnblogs.com/blog/2162843/202010/2162843-20201025225351160-267468740.gif" alt="" loading="lazy"><br>
+玩的一般，在圈子也算低端，和键盘的跑马灯有一点点像。</p>
+<h1 id="写在文末">写在文末</h1>
+<blockquote>
+<p>驱动、烧录程序、例程：不想传百度云，蓝奏云也上传不了（太大）<br>
+感兴趣的可以加下作者小白的QQ号：<strong>1625098483</strong>，也欢迎交个朋友。微信在<strong>置顶文章</strong>里。👍<br>
+买的十块钱的板子有点太低端了，打算后面做学校发的那个150来块钱的<strong>STM32</strong>板子，封装比较完善。</p>
+</blockquote>
+
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2020-10-25 22:59</span>&nbsp;
+<a href="https://www.cnblogs.com/ZhengBlogs/">你好我叫郑某人</a>&nbsp;
+阅读(<span id="post_view_count">3</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13832614" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13832614);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 633589, cb_blogApp = 'ZhengBlogs', cb_blogUserGuid = 'f77f905a-b240-4ba6-e545-08d85494b69b';
+    var cb_entryId = 13832614, cb_entryCreatedDate = '2020-10-25 22:59', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 你好我叫郑某人
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

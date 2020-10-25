@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="description" content="LSM 读写流程与 Size-Tiered / Leveled 压缩策略详解。LSM 树的思想是使用顺序写代替随机写来提高写性能，与此同时会略微降低读性能。" />
+    <meta property="og:description" content="LSM 读写流程与 Size-Tiered / Leveled 压缩策略详解。LSM 树的思想是使用顺序写代替随机写来提高写性能，与此同时会略微降低读性能。" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>LSM 树详解 - -Finley- - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    
+    <link type="text/css" rel="stylesheet" href="https://www.cnblogs.com/Finley/custom.css?v=a7p6Xq5tLP4JboRKQP3MSHXoC50=" />
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/codinglife/bundle-codinglife-mobile.min.css?v=JtOonyglmq10yOLdtvmh-WsVtFwm8HRB8mR_g_TGArQ" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/Finley/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/Finley/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/Finley/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 259003;
+        var currentBlogApp = 'Finley';
+        var cb_enable_mathjax = true;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'CodingLife';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 10:04';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processClass: 'math', processEscapes: true },
+        TeX: {
+        equationNumbers: { autoNumber: ['AMS'], useLabelIds: true },
+        extensions: ['extpfeil.js', 'mediawiki-texvc.js'],
+        Macros: {bm: "\\boldsymbol"}
+        },
+        'HTML-CSS': { linebreaks: { automatic: true } },
+        SVG: { linebreaks: { automatic: true } }
+        });
+    </script>
+    <script src="https://mathjax.cnblogs.com/2_7_5/MathJax.js?config=TeX-AMS-MML_HTMLorMML&amp;v=20200504"></script>
+    
+</head>
+<body class="no-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    <!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/Finley/"><img id="blogLogo" src="/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/Finley/">Finley</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/Finley/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/-Finley-">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/Finley/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 
+152&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+100</span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Finley/p/13875536.html">
+    <span>LSM 树详解</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+    <div id="cnblogs_post_description" style="display: none">
+        LSM 读写流程与 Size-Tiered / Leveled 压缩策略详解。LSM 树的思想是使用顺序写代替随机写来提高写性能，与此同时会略微降低读性能。
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+    <p>LSM树(Log Structured Merged Tree)的名字往往给人一个错误的印象, 实际上LSM树并没有严格的树状结构。</p>
+<p>LSM 树的思想是使用顺序写代替随机写来提高写性能，与此同时会略微降低读性能。</p>
+<p>LSM 的高速写入能力与读缓存技术带来的高速读能力结合受到了需要处理大规模数据的开发者的青睐，成为了非常流行的存储结构。</p>
+<p>HBase、 Cassandra、 LevelDB、 RocksDB 以及 ClickHouse MergeTree 等流行的 NoSQL 数据库均采用 LSM 存储结构。</p>
+<h1 id="读写流程">读写流程</h1>
+<p>具体来说 LSM 的数据更新是日志式的，修改数据时直接追加一条新记录（为被修改数据创建一个新版本），而使用 B/B+ 树的数据库则需要找到数据在磁盘上的位置并在原地进行修改。</p>
+<p><img src="https://img2020.cnblogs.com/blog/793413/202010/793413-20201025165206001-1985214304.png" alt="" loading="lazy"></p>
+<blockquote>
+<p>这张经典图片来自 Flink PMC 的 Stefan Richter 在Flink Forward 2018演讲的PPT</p>
+</blockquote>
+<h2 id="写入">写入</h2>
+<p>在执行写操作时，首先写入 active memtable 和预写日志(Write Ahead Logging, WAL)。因为内存中 memtable 会断电丢失数据，因此需要将记录写入磁盘中的 WAL 保证数据不会丢失。</p>
+<p>顾名思义 <a href="https://rocksdb.org.cn/doc/MemTable.html">MemTable</a>是一个内存中的数据结构，它保存了落盘之前的数据。SkipList 是最流行的 Memtable 实现方式，Hbase 和 RocksDB 均默认使用 SkipList 作为 MemTable。</p>
+<p>当 Active MemTable 写满后会被转换为不可修改的 Immutable MemTable，并创建一个新的空 Active MemTable。后台线程会将 Immutable MemTable 写入到磁盘中形成一个新的 SSTable 文件，并随后销毁 Immutable MemTable。</p>
+<p><img src="https://img2020.cnblogs.com/blog/793413/202010/793413-20201025171559254-1663417098.png" alt="" loading="lazy"></p>
+<p>SSTable (Sorted String Table) 是 LSM 树在磁盘中持久化存储的数据结构，它是一个有序的键值对文件。</p>
+<p>LSM 不会修改已存在的 SSTable, LSM 在修改数据时会直接在 MemTable 中写入新版本的数据，并等待 MemTable 落盘形成新的 SSTable。因此，虽然在同一个 SSTable 中 key 不会重复，但是不同的 SSTable 中仍会存在相同的 Key。</p>
+<h2 id="读取">读取</h2>
+<p>因为最新的数据总是先写入 MemTable，所以在读取数据时首先要读取 MemTable 然后从新到旧搜索 SSTable，找到的第一个版本就是该 Key 的最新版本。</p>
+<p>根据局部性原理，刚写入的数据很有可能被马上读取。因此， MemTable 在充当写缓存之外也是一个有效的读缓存。</p>
+<p>为了提高读取效率 SSTable 通常配有 BloomFilter 和索引来快速判断其中是否包含某个 Key 以及快速定位它的位置。</p>
+<p>因为读取过程中需要查询多个 SSTable 文件，因此理论上 LSM 树的读取效率低于使用 B 树的数据库。为了提高读取效率，RocksDB 中内置了块缓存(Block Cache)将频繁访问磁盘块缓存在内存中。而 LevelDB 内置了 Block Cache 和 Table Cache 来缓存热点 Block 和 SSTable。</p>
+<h1 id="compact">Compact</h1>
+<p>随着不断的写入 SSTable 数量会越来越多，数据库持有的文件句柄(FD)会越来越多，读取数据时需要搜索的 SSTable 也会越来越多。另一方面对于某个 Key 而言只有最新版本的数据是有效的，其它记录都是在白白浪费磁盘空间。因此对 SSTable 进行合并和压缩(Compact)就十分重要。</p>
+<p>在介绍 Compact 之前， 我们先来了解 3 个重要的概念:</p>
+<ul>
+<li>读放大:读取数据时实际读取的数据量大于真正的数据量。例如 LSM 读取数据时需要扫描多个 SSTable.</li>
+<li>写放大:写入数据时实际写入的数据量大于真正的数据量。例如在 LSM 树中写入时可能触发Compact操作，导致实际写入的数据量远大于该key的数据量。</li>
+<li>空间放大:数据实际占用的磁盘空间比数据的真正大小更多。例如上文提到的 SSTable 中存储的旧版数据都是无效的。</li>
+</ul>
+<p>Compact 策略需要在三种负面效应之间进行权衡以适应使用场景。</p>
+<h2 id="size-tiered-compaction-strategy">Size Tiered Compaction Strategy</h2>
+<p>Size Tiered Compaction Strategy (STCS) 策略保证每层 SSTable 的大小相近，同时限制每一层 SSTable 的数量。当某一层 SSTable 数量达到阈值后则将它们合并为一个大的 SSTable 放入下一层。</p>
+<p><img src="https://img2020.cnblogs.com/blog/793413/202010/793413-20201025204449268-629429328.png" alt="" loading="lazy"></p>
+<p>STCS 实现简单且 SSTable 数量较少，缺点是当层数较深时容易出现巨大的 SSTable。此外，即使在压缩后同一层的 SSTable 中仍然可能存在重复的 key，一方面存在较多无效数据即空间放大较严重，另一方面读取时需要从旧到新扫描每一个 SSTable 读放大严重。通常认为与下文介绍的 Leveled Compaction Strategy 相比， STCS 的写放大较轻一些<a href="https://stratos.seas.harvard.edu/publications/monkey-optimal-navigable-key-value-store">[1]</a><a href="https://smalldatum.blogspot.com/2018/08/name-that-compaction-algorithm.html">[2]</a>。</p>
+<p>STCS 是 Cassandra 的默认压缩策略<a href="https://www.instaclustr.com/apache-cassandra-compaction/#:~:text=This%20is%20the%20default%20compaction,and%20how%20tombstones%20are%20handled.">[3]</a>。Cassandra 认为在插入较多的情况下 STCS 有更好的表现。</p>
+<p>Tiered压缩算法在RocksDB的代码里被命名为 Universal Compaction。</p>
+<h2 id="leveled-compaction-strategy">Leveled Compaction Strategy</h2>
+<p>Leveled Compaction Strategy (LCS)策略也是采用分层的思想，每一层限制总文件的大小。</p>
+<p><img src="https://img2020.cnblogs.com/blog/793413/202010/793413-20201025212003916-1030349609.png" alt="" loading="lazy"></p>
+<p>LCS 会将每一层切分成多个大小相近的SSTable, 且 SSTable 是在层内是有序的，一个key在每一层至多只有1条记录，不存在冗余记录。</p>
+<p><img src="https://img2020.cnblogs.com/blog/793413/202010/793413-20201025210900589-992809160.png" alt="" loading="lazy"></p>
+<p>LCS 层内不存在冗余所以空间放大比较小。因为层内有序， 所以在读取时每一层最多读取一个 SSTable 所以读放大较小。在读取和更改较多的场景下 LCS 压缩策略有着显著优势。</p>
+<p>当某一层的总大小超过阈值之后，LCS 会从中选择一个 SSTable 与下一层中<strong>所有和它有交集的 SSTable</strong>合并，并将合并后的 SSTable 放在下一层。请注意与所有有交集的 SSTable 合并保证了 compact 之后层内仍然是有序且无冗余的。</p>
+<p><img src="https://img2020.cnblogs.com/blog/793413/202010/793413-20201025212437808-1589439327.png" alt="" loading="lazy"></p>
+<p>LCS 下多个不相关的合并操作是可以并发执行的。</p>
+<p>LCS 有一个变体称为 Leveled-N 策略，它将每一层分为 N 个区块，层内不再全局有序只在区块内保证有序。它是 LCS 与 STCS 的中间状态，与 LCS 相比拥有更小的写放大，与 STCS 相比拥有更小的读放大与空间放大。</p>
+<h2 id="rocksdb-的压缩策略">RocksDB 的压缩策略</h2>
+<p>RocksDB 默认采用的是 Size Tiered 与 Leveled 混合的压缩策略。在 RocksDB 中存在一个 Active MemTable 和多个 Immutable MemTable。</p>
+<p>MemTable 被写入磁盘后被称为 Level-0 (L0)。L0 是无序的，也就是说 L0 的 SSTable 允许存在重叠。除 L0 外的层都是全局有序的，且采用 Leveled 策略进行压缩。</p>
+<p>当 L0 中文件个数超过阈值(level0_file_num_compaction_trigger)后会触发压缩操作，所有的 L0 文件都将被合并进 L1。</p>
+<p><img src="https://img2020.cnblogs.com/blog/793413/202010/793413-20201025214150329-1964358782.png" alt="" loading="lazy"></p>
+<p>因为 L0 是 MemTable 直接落盘后的结果，而热点 key 的更新可能存在于多个 MemTable 中，所以 L0 的 SSTable 中极易因为热点 key 而出现交集。</p>
+<p>关于 RocksDB 压缩的更多细节我们可以阅读官方文档中的<a href="https://rocksdb.org.cn/doc/Compaction.html">Compaction</a>和 <a href="https://rocksdb.org.cn/doc/Leveled-Compaction.html">Leveled Compacton</a> 两篇文章。</p>
+
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2020-10-25 22:04</span>&nbsp;
+<a href="https://www.cnblogs.com/Finley/">-Finley-</a>&nbsp;
+阅读(<span id="post_view_count">11</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13875536" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13875536);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 259003, cb_blogApp = 'Finley', cb_blogUserGuid = '158b9dd5-7e39-e511-b908-9dcfd8948a71';
+    var cb_entryId = 13875536, cb_entryCreatedDate = '2020-10-25 22:04', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 -Finley-
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

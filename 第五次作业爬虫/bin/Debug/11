@@ -1,0 +1,456 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="description" content="1、Viper是什么？ Viper 是.NET平台下的Anno微服务框架的一个示例项目。入门简单、安全、稳定、高可用、全平台可监控。底层通讯可以随意切换thrift&amp;#160;grpc。&amp;#160;自" />
+    <meta property="og:description" content="1、Viper是什么？ Viper 是.NET平台下的Anno微服务框架的一个示例项目。入门简单、安全、稳定、高可用、全平台可监控。底层通讯可以随意切换thrift&amp;#160;grpc。&amp;#160;自" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>net core 微服务框架 Viper 调用链路追踪 - 杜燕明 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.svg" type="image/svg+xml" />
+    
+    <link rel="stylesheet" href="/css/blog-common.min.css?v=caAedYKpnz341INFIWakIM6r1EP9FIuJg43i9i8zqDQ" />
+    <link id="MainCss" rel="stylesheet" href="/skins/bluesky/bundle-bluesky.min.css?v=66dDisik3fcPwRHzge6OPz5XXEtQYoHeZwqfADmMifQ" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/bluesky/bundle-bluesky-mobile.min.css?v=w2Rgaiz5pwMvQiaI018cDsOEsicdDhpRf-p561XUG6Q" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/duyanming/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/duyanming/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/duyanming/wlwmanifest.xml" />
+    <script>
+        var currentBlogId = 298645;
+        var currentBlogApp = 'duyanming';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'BlueSky';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-10-25 08:55';
+        </script>
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="/js/blog-common.min.js?v=kKx3DBtpvO8r97BzPmHJseQ10fGHkI-ZwMh4FA0eEd0"></script>
+    
+    
+    
+</head>
+<body class="has-navbar">
+    <a name="top"></a> 
+    <div id="top_nav" class="navbar">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding">
+                    <a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="/images/logo.svg?v=R9M0WmLAIPVydmdzE2keuvnjl-bPR7_35oHqtiBzGsM" alt="博客园Logo" /></a>
+                </li>
+                <li><a href="/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-sitehome')">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-news')">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-q')">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-brands')">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-ing')">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga('send', 'event', 'Link', 'click', 'skin-navbar-edu')">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3" />
+                        <button type="submit" id="zzk_search_button">
+                            <img src="/images/aggsite/search.svg" alt="搜索" />
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="/images/aggsite/myblog.svg" alt="我的博客" />
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="/images/aggsite/message.svg?v=oS4PkibyMjZ9rGD5XAcLt99uW_s76Javy2up4dbnZNY" alt="短消息" />
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="/images/aggsite/avatar-default.svg" alt="用户头像" />
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" onclick="logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signin/?returnUrl=https://www.cnblogs.com/">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    <!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/duyanming/"><img id="blogLogo" src="/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/duyanming/">杜燕明</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/duyanming/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/%E6%9D%9C%E7%87%95%E6%98%8E">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/duyanming/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 
+10&nbsp; </span>
+<span id="stats_article_count">文章 - 
+2&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+39</span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/duyanming/p/13855269.html">
+    <span>net core 微服务框架 Viper 调用链路追踪</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body">
+    <h2>1、Viper是什么？</h2>
+<p>　　Viper 是.NET平台下的<strong>Anno</strong>微服务框架的一个示例项目。<strong>入门简单</strong>、<strong>安全</strong>、<strong>稳定</strong>、<strong>高可用</strong>、<strong>全平台可监控。底层通讯可以随意切换<code>thrift</code>&nbsp;<code>grpc</code>。<strong>&nbsp;自带服务发现、调用链追踪、Cron 调度、限流、事件总线、CQRS 、DDD、类似MVC的开发体验，插件化开发</strong></strong></p>
+<p>　　<strong>一个<code>不可监控</code>的微服务平台是<code>可怕的</code></strong>，出了问题<strong>&nbsp;难以准确定位问题的根源</strong>， Anno则提供了一套完整的监控体系，包括<strong><code>链路追踪</code>、<code>服务占用的系统资源</code>、系统自身&nbsp;<code>CPU、内存、硬盘使用率</code></strong>实时可监控等等。</p>
+<p><img src="https://img2020.cnblogs.com/blog/998152/202010/998152-20201021222800170-522854474.png" alt="" loading="lazy"></p>
+<p><strong>github:</strong><br><a title="https://github.com/duyanming/Viper" href="https://github.com/duyanming/Viper" target="_blank">https://github.com/duyanming/Viper</a><br><strong>文档地址:</strong><br><a title="https://duyanming.github.io/" href="https://duyanming.github.io/" target="_blank">https://duyanming.github.io/</a></p>
+<p><strong>体验地址:</strong>（体验用户为anno 密码123456 同一时间一个用户只能在一个终端登录用户多的时候可能发生强制退出的情况，稍后登录体验）<br><a title="http://140.143.207.244/" href="http://140.143.207.244/" target="_blank">http://140.143.207.244/</a></p>
+<p>如果对Viper不了解可以看：</p>
+<p><span style="font-size: 14px">　　1、&nbsp;<a id="cb_post_title_url" class="postTitle2 vertical-middle" title="https://www.cnblogs.com/duyanming/p/13832855.html" href="https://www.cnblogs.com/duyanming/p/13832855.html">net core 微服务 快速开发框架 Viper 初体验</a></span></p>
+<p><span style="font-size: 14px">　　2、<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/duyanming/p/13846451.html">打不死的小强 .net core 微服务 快速开发框架 Viper 限流</a></span></p>
+<h2>2、Viper调用链追踪　</h2>
+<div>
+<div>　　当我们进行微服务架构开发时，通常会划分出多个微服务，各服务之间通过RPC进行调用。一个业务操作，可能需要多个微服务的协同才能完成，在业务调用链路上任何一个微服务出现问题或者网络出现问题，都会导致业务失败。随着业务越来越复杂，微服务之间的协作也越来越多，越来越复杂。如果不能直观的看到整个调用链路，那么我们就无法快速、准确的定位问题、解决问题，有甚者出现服务之间出现死循环调用拖垮整个集群。这样我们不仅不能尝到微服务给我们带来的好处，反而引入了一堆更复杂的问题。因此对于一个微服务系统链路追踪是必要的。</div>
+
+
+
+
+
+
+
+
+
+
+</div>
+<p>&nbsp;　　Viper为服务之间调用提供了一套完善的链路追踪体系。通过Viper可以清晰的看到一个调用链（一次业务操作）经过了哪些微服务、每个服务消耗多少时间、是否出现异常、处理结果如何等等。通过链路追踪体系可以分析整个业务的状态，比如那个服务或者业务操作耗时异常需要优化，快速定位问题解决问题。从而更好的为整个微服务体系服务。</p>
+<p>　　不仅如此还可以帮助公司新入职员工梳理梳理业务脉络，明白自己所处在的业务环节、<span style="color: rgba(0, 0, 0, 1)">预测系统可能发生的隐患</span>，早发现早解决，防患于未然。</p>
+<p><strong>链路追踪列表：</strong></p>
+<p><img src="https://img2020.cnblogs.com/blog/998152/202010/998152-20201021231653740-1148153455.png" alt="" loading="lazy"></p>
+<p>&nbsp;<strong>&nbsp;单个链路追踪示例：</strong></p>
+<p><strong>　　</strong>下面这个调用链路为：</p>
+<p>　　　<img src="https://img2020.cnblogs.com/blog/998152/202010/998152-20201021233739635-828337880.png" alt="" loading="lazy"></p>
+<p>&nbsp;　　整个调用链路花费22毫秒，最后两个调用为并行。</p>
+<p><img src="https://img2020.cnblogs.com/blog/998152/202010/998152-20201021232101418-1182920896.png" alt="" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2>3、Viper&amp;Anno 远程过程调用（RPC）</h2>
+<p>　　<span style="background-color: rgba(0, 255, 0, 1)">Anno</span> 框架底层<span style="background-color: rgba(0, 255, 0, 1)">Rpc</span>采用了成熟的 <strong><span style="background-color: rgba(0, 255, 0, 1)">thrift</span>(首选推荐)</strong>、<strong><span style="background-color: rgba(0, 255, 0, 1)">grpc</span>，</strong>他们都有着<strong><span style="background-color: rgba(0, 255, 0, 1)">高性能</span>、<span style="background-color: rgba(0, 255, 0, 1)">跨语言</span></strong>的特点，因此Anno框架也是一个跨语言的，可以轻松实现混合编程的框架<strong>。目前支持.net core、.net framework、java，更多的实现期待大家共同努力一起贡献。</strong></p>
+<p><strong>　　Thrift是一种接口描述语言和二进制通讯协议，它被用来定义和创建跨语言的服务。它被当作一个<span style="text-decoration: underline; background-color: rgba(0, 255, 0, 1)">远程过程调用</span>（RPC）框架来使用，是由<a href="https://baike.baidu.com/item/Facebook" target="_blank">Facebook</a>为“大规模跨语言服务开发”而开发的。目前托管在Apache，更多详细可翻阅网上资料。</strong></p>
+<p><strong>　　</strong></p>
+<p>　　<strong>grpc 是一个高性能、开源和通用的 RPC 框架，面向移动和 HTTP/2 设计。目前提供 C、Java 和 Go 语言版本，分别是：grpc, grpc-java, grpc-go. 其中 C 版本支持 C, C++, Node.js, Python, Ruby, Objective-C, PHP 和 C# 支持</strong>.</p>
+<p>　　gRPC 基于 HTTP/2 标准设计，带来诸如双向流、流控、头部压缩、单 TCP 连接上的多复用请求等特。这些特性使得其在移动设备上表现更好，更省电和节省空间占用。</p>
+<p>&nbsp;</p>
+<p><strong>以Thrift为例来了解Anno框架</strong></p>
+<p>　　Anno框架的 Thrift接口描述文件：</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">namespace</span><span style="color: rgba(0, 0, 0, 1)"> csharp Anno.Rpc   #  命名空间
+</span><span style="color: rgba(0, 0, 255, 1)">struct</span><span style="color: rgba(0, 0, 0, 1)"> Micro {   #  服务信息
+    </span><span style="color: rgba(128, 0, 128, 1)">1</span>: <span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)"> ip
+    </span><span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">: i32 port
+    </span><span style="color: rgba(128, 0, 128, 1)">3</span><span style="color: rgba(0, 0, 0, 1)">: i32 timeout
+    </span><span style="color: rgba(128, 0, 128, 1)">4</span>: <span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)"> name
+    </span><span style="color: rgba(128, 0, 128, 1)">5</span>: <span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)"> nickname
+    </span><span style="color: rgba(128, 0, 128, 1)">6</span><span style="color: rgba(0, 0, 0, 1)">: i32 weight
+  }
+service BrokerService {  #  Provider服务
+    </span><span style="color: rgba(0, 0, 255, 1)">string</span> broker(<span style="color: rgba(128, 0, 128, 1)">1</span>:map&lt;<span style="color: rgba(0, 0, 255, 1)">string</span>,<span style="color: rgba(0, 0, 255, 1)">string</span>&gt;<span style="color: rgba(0, 0, 0, 1)">  input)
+}
+service BrokerCenter {  #  注册中心
+    </span><span style="color: rgba(0, 0, 255, 1)">bool</span> add_broker(<span style="color: rgba(128, 0, 128, 1)">1</span>:map&lt;<span style="color: rgba(0, 0, 255, 1)">string</span>,<span style="color: rgba(0, 0, 255, 1)">string</span>&gt;<span style="color: rgba(0, 0, 0, 1)">  input)
+    list</span>&lt;Micro&gt; GetMicro(<span style="color: rgba(128, 0, 128, 1)">1</span>:<span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)">  channel)
+    </span><span style="color: rgba(0, 0, 255, 1)">string</span> Invoke(<span style="color: rgba(128, 0, 128, 1)">1</span>:map&lt;<span style="color: rgba(0, 0, 255, 1)">string</span>,<span style="color: rgba(0, 0, 255, 1)">string</span>&gt;<span style="color: rgba(0, 0, 0, 1)">  input)
+}</span></pre>
+</div>
+<p>服务之间通讯的接口为&nbsp;<strong>string broker(1:map&lt;string,string&gt; input)，服务之间通讯采用的是 Thrift的 二进制传输。</strong></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;summary&gt;</span>
+    <span style="color: rgba(128, 128, 128, 1)">///</span><span style="color: rgba(0, 128, 0, 1)"> Engine 常量
+    </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;/summary&gt;</span>
+    <span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> Eng
+    {
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;summary&gt;</span>
+        <span style="color: rgba(128, 128, 128, 1)">///</span><span style="color: rgba(0, 128, 0, 1)"> 命名空间
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;/summary&gt;</span>
+        <span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">string</span> NAMESPACE = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">channel</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">;
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;summary&gt;</span>
+        <span style="color: rgba(128, 128, 128, 1)">///</span><span style="color: rgba(0, 128, 0, 1)"> 类
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;/summary&gt;</span>
+        <span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">string</span> CLASS = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">router</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">;
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;summary&gt;</span>
+        <span style="color: rgba(128, 128, 128, 1)">///</span><span style="color: rgba(0, 128, 0, 1)"> 方法
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;/summary&gt;</span>
+        <span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">string</span> METHOD = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">method</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">;
+    }</span></pre>
+</div>
+<pre><span style="background-color: rgba(0, 255, 0, 1); font-size: 16px"><strong>channel、router、method</strong></span>此三个参数是远程过程调用过程中的<span style="font-size: 16px; color: rgba(52, 203, 170, 1)">必须参数</span>。<br>以插件 <strong>Anno.Plugs.LogicService为例<br></strong></pre>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">namespace</span><span style="color: rgba(0, 0, 0, 1)"> Anno.Plugs.LogicService
+{
+    </span><span style="color: rgba(0, 0, 255, 1)">using</span><span style="color: rgba(0, 0, 0, 1)"> Anno.CommandBus;
+
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> PlatformModule : BaseModule
+    {
+        </span>--------------省略-------------------
+        <span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;summary&gt;</span>
+        <span style="color: rgba(128, 128, 128, 1)">///</span><span style="color: rgba(0, 128, 0, 1)"> 获取用户功能
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;/summary&gt;</span>
+        <span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;returns&gt;&lt;/returns&gt;</span>
+        [AnnoInfo(Desc = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">获取用户功能</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)]
+        </span><span style="color: rgba(0, 0, 255, 1)">public</span><span style="color: rgba(0, 0, 0, 1)"> ActionResult GetFunc()
+        {
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> _platformQuery.GetFunc(Profile);
+        }
+    }
+}    </span></pre>
+</div>
+<pre><strong>channel 对应：<span style="font-size: 16px; color: rgba(52, 203, 170, 1)">Anno.Plugs.Logic</span></strong></pre>
+<pre><strong>router  </strong><strong>对应：<span style="font-size: 16px; color: rgba(52, 203, 170, 1)">Platform</span></strong></pre>
+<pre><strong>method  </strong><strong>对应：<span style="font-size: 16px; color: rgba(52, 203, 170, 1)">GetFunc</span></strong></pre>
+<pre></pre>
+<pre><span style="font-size: 16px"><strong>保留关键字：</strong></span><span style="font-size: 16px"><strong><span style="background-color: rgba(0, 255, 0, 1)">TraceId,PreTraceId,AppName,AppNameTarget,GlobalTraceId,TTL,X-Original-For</span></strong></span></pre>
+<pre><strong>TraceId：一次Rpc调用成为一个span，这个调用的唯一标识为</strong><strong>TraceId<br></strong></pre>
+<pre><strong>PreTraceId：服务之间相互调用的时候</strong><strong>PreTraceId用来标识父子关系的父</strong><strong>TraceId<br></strong></pre>
+<pre><strong>AppName：当前服务名称<br></strong></pre>
+<pre><strong>AppNameTarget：目标服务名称<br></strong></pre>
+<pre><strong>GlobalTraceId：一次用户操作或者是系统人物成为一个调用链，这个调用链的唯一标识为</strong><strong>GlobalTraceId<br></strong></pre>
+<pre><strong>TTL：跨越的服务次数<br></strong></pre>
+<pre><strong>X-Original-For：web调用的时候的用户IP</strong><strong>&nbsp;</strong></pre>
+<h2>2、Viper调用链追踪体系解析&nbsp;</h2>
+<p>　　Viper的调用链式内嵌在 Anno.Rpc.Client中的，Rpc调用之前创建追踪对象<span style="color: rgba(52, 203, 170, 1)"><strong>sys_trace</strong></span>记录Request参数，调用完成之后完善响应Response结果并且把追踪对象<span style="color: rgba(52, 203, 170, 1)"><strong>sys_trace</strong></span>写入内存队列中。然后定时定量发送到追踪服务器。</p>
+<p>伪代码如下：</p>
+<div class="cnblogs_code">
+<pre> 　　<span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;summary&gt;</span>
+    <span style="color: rgba(128, 128, 128, 1)">///</span><span style="color: rgba(0, 128, 0, 1)"> 追踪队列池
+    </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;/summary&gt;</span>
+    <span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> TracePool
+    {<br>　　　　　//内存队列
+        </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">static</span> ConcurrentQueue&lt;sys_trace&gt; TraceQueue { <span style="color: rgba(0, 0, 255, 1)">get</span>; <span style="color: rgba(0, 0, 255, 1)">set</span>; } = <span style="color: rgba(0, 0, 255, 1)">new</span> ConcurrentQueue&lt;sys_trace&gt;<span style="color: rgba(0, 0, 0, 1)">();
+　　　　　//业务处理后推送追踪对象到内存队列 TraceQueue
+        </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">void</span> EnQueue(sys_trace trace, <span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)"> result)
+        {
+            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (trace != <span style="color: rgba(0, 0, 255, 1)">null</span><span style="color: rgba(0, 0, 0, 1)">)
+            {
+                trace.UseTimeMs </span>= (DateTime.Now -<span style="color: rgba(0, 0, 0, 1)"> trace.Timespan).TotalMilliseconds;
+                trace.Response </span>=<span style="color: rgba(0, 0, 0, 1)"> result;
+                TraceQueue.Enqueue(trace);
+            }
+        }<br>　　　　　//创建追踪对象
+        </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> sys_trace CreateTrance(Dictionary&lt;<span style="color: rgba(0, 0, 255, 1)">string</span>, <span style="color: rgba(0, 0, 255, 1)">string</span>&gt;<span style="color: rgba(0, 0, 0, 1)"> input)
+        {
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> sys_trace()
+            {
+                Timespan </span>=<span style="color: rgba(0, 0, 0, 1)"> DateTime.Now,
+                InputDictionary </span>=<span style="color: rgba(0, 0, 0, 1)"> input
+            };
+        }
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;summary&gt;</span>
+        <span style="color: rgba(128, 128, 128, 1)">///</span><span style="color: rgba(0, 128, 0, 1)"> 批量发送调用链到 追踪服务器（定时任务会定时调用TryDequeue）
+        </span><span style="color: rgba(128, 128, 128, 1)">///</span> <span style="color: rgba(128, 128, 128, 1)">&lt;/summary&gt;</span>
+        <span style="color: rgba(0, 0, 255, 1)">internal</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">void</span><span style="color: rgba(0, 0, 0, 1)"> TryDequeue()
+        {
+            </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (TraceQueue.IsEmpty)
+            {
+                </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">;
+            }
+
+            List</span>&lt;sys_trace&gt; traces = <span style="color: rgba(0, 0, 255, 1)">new</span> List&lt;sys_trace&gt;<span style="color: rgba(0, 0, 0, 1)">();
+        ReTryDequeue:
+            </span><span style="color: rgba(0, 0, 255, 1)">while</span> (!TraceQueue.IsEmpty &amp;&amp; traces.Count &lt; <span style="color: rgba(128, 0, 128, 1)">100</span><span style="color: rgba(0, 0, 0, 1)">)
+            {
+                TraceQueue.TryDequeue(</span><span style="color: rgba(0, 0, 255, 1)">out</span><span style="color: rgba(0, 0, 0, 1)"> sys_trace trace);<br>
+              　　 ------------转换追踪对象--------------</span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (trace.Rlt)
+                {
+                    trace.Response </span>= <span style="color: rgba(0, 0, 255, 1)">null</span><span style="color: rgba(0, 0, 0, 1)">;
+                }
+
+                traces.Add(trace);
+            }
+            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (traces.Count &lt;= <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">)
+            {
+                </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">;
+            }
+            Dictionary</span>&lt;<span style="color: rgba(0, 0, 255, 1)">string</span>, <span style="color: rgba(0, 0, 255, 1)">string</span>&gt; inputTrace = <span style="color: rgba(0, 0, 255, 1)">new</span> Dictionary&lt;<span style="color: rgba(0, 0, 255, 1)">string</span>, <span style="color: rgba(0, 0, 255, 1)">string</span>&gt;<span style="color: rgba(0, 0, 0, 1)">
+            {
+                {Const.Enum.Eng.NAMESPACE, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Anno.Plugs.Trace</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">},
+                {Const.Enum.Eng.CLASS, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Trace</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">},
+                {Const.Enum.Eng.METHOD, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">TraceBatch</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">},
+                {</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">traces</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, Newtonsoft.Json.JsonConvert.SerializeObject(traces)}
+            };<br>　　　　　　　//发送追踪数据
+            Connector.BrokerDns(inputTrace);
+            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">TraceQueue.IsEmpty)
+            {
+                traces.Clear();
+                </span><span style="color: rgba(0, 0, 255, 1)">goto</span><span style="color: rgba(0, 0, 0, 1)"> ReTryDequeue;
+            }
+        }       </span><span style="color: rgba(0, 0, 0, 1)">
+    }</span></pre>
+</div>
+<p>&nbsp;&nbsp;</p>
+<p><strong>Viper</strong></p>
+<p><strong>github:</strong><br><a title="https://github.com/duyanming/Viper" href="https://github.com/duyanming/Viper" target="_blank">https://github.com/duyanming/Viper</a><br><strong>文档地址:</strong><br><a title="https://duyanming.github.io/" href="https://duyanming.github.io/" target="_blank">https://duyanming.github.io/</a></p>
+<p><strong>体验地址:</strong>（体验用户为anno 密码123456 同一时间一个用户只能在一个终端登录用户多的时候可能发生强制退出的情况，稍后登录体验）<br><a title="http://140.143.207.244/" href="http://140.143.207.244/" target="_blank">http://140.143.207.244/</a></p>
+<p>&nbsp;</p>
+<p>关于Viper的更多内容，随后更新。敬请关注。开源不易，感谢Star。</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2020-10-25 20:55</span>&nbsp;
+<a href="https://www.cnblogs.com/duyanming/">杜燕明</a>&nbsp;
+阅读(<span id="post_view_count">53</span>)&nbsp;
+评论(<span id="post_comment_count">1</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=13855269" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(13855269);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/10.3.1/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 298645, cb_blogApp = 'duyanming', cb_blogUserGuid = 'a73f88f7-3952-e611-9fc1-ac853d9f53cc';
+    var cb_entryId = 13855269, cb_entryCreatedDate = '2020-10-25 20:55', cb_postType = 1;
+    loadViewCount(cb_entryId);
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'></div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'></div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+   </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 杜燕明
+<br /><span id="poweredby">Powered by .NET 5.0.0-rc.2.20475.5 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

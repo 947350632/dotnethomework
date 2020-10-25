@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+    <title>博客园</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="//common.cnblogs.com/favicon.ico" />
+  <link rel="stylesheet" href="styles.f90a9a1a2c6f3541e719.css"></head>
+  <body class="mat-typography">
+    <div id="unsupported-browser" style="display: none;">
+      您使用的浏览器不受支持，建议使用新版
+      <a href="https://www.google.cn/intl/zh-CN/chrome/">Google Chrome</a> /
+      <a href="https://www.microsoft.com/zh-cn/edge">Microsoft Edge</a> /
+      <a href="https://www.mozilla.org/zh-CN/firefox/">Firefox</a>
+      <button class="close" onclick="document.getElementById('unsupported-browser').style.display = 'none'">×</button>
+    </div>
+    <app-root>
+      <div class="app-root-loading">
+        <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+          <div class="mdc-linear-progress__buffer">
+            <div class="mdc-linear-progress__buffer-bar"></div>
+            <div class="mdc-linear-progress__buffer-dots"></div>
+          </div>
+          <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+          </div>
+          <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+          </div>
+        </div>
+      </div>
+    </app-root>
+    <script nomodule>
+      if (navigator.userAgent.indexOf('Trident/7.0') === -1)
+        document.getElementById('unsupported-browser').style.display = '';
+    </script>
+  <script src="runtime-es2015.64d519b3c38ee16d436b.js" type="module"></script><script src="runtime-es5.64d519b3c38ee16d436b.js" nomodule defer></script><script src="polyfills-es5.9702455f9686b0d1c004.js" nomodule defer></script><script src="polyfills-es2015.a85f042dde10393ca375.js" type="module"></script><script src="main-es2015.27129633678528280fe7.js" type="module"></script><script src="main-es5.27129633678528280fe7.js" nomodule defer></script></body>
+</html>
